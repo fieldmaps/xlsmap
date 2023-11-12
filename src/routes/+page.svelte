@@ -4,7 +4,7 @@
 </script>
 
 <svelte:head>
-  <link rel="manifest" href="/" />
+  <link rel="manifest" href="/manifest.json" />
 </svelte:head>
 
 <main>
