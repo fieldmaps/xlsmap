@@ -2,15 +2,17 @@
   import { PUBLIC_NAME } from '$env/static/public';
   import Filter from '$lib/components/Filter.svelte';
   import Manage from '$lib/components/Manage.svelte';
-  import { importForm } from '$lib/form';
+  import Playground from '$lib/components/Playground.svelte';
+  import { fetchForm } from '$lib/data/fetch';
   import { formValid } from '$lib/stores';
   import { onMount } from 'svelte';
 
   const MANAGE = 'MANAGE';
   const FILTER = 'FILTER';
 
+  export let root: boolean;
   let tab = MANAGE;
-  onMount(importForm);
+  if (!root) onMount(fetchForm);
 </script>
 
 <nav>
@@ -34,6 +36,9 @@
     </button>
   </div>
   {#if tab === MANAGE}
+    {#if root}
+      <Playground />
+    {/if}
     <Manage />
   {:else if tab === FILTER}
     <Filter />

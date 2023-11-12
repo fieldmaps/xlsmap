@@ -9,8 +9,8 @@
 </svelte:head>
 
 <main>
-  <Sidebar />
-  <Map />
+  <Sidebar root={false} />
+  <Map root={false} />
 </main>
 
 <style>

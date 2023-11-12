@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { exportScreenshot } from '$lib/fetch';
+  import { downloadScreenshot } from '$lib/data/download';
 </script>
 
 <section>
-  <button on:click={exportScreenshot}>↓ map.png</button>
+  <button on:click={downloadScreenshot}>↓ map.png</button>
   <div>Filters</div>
 </section>
 

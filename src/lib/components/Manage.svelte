@@ -1,8 +1,15 @@
 <script lang="ts">
   import Form from '$lib/components/Form.svelte';
-  import { exportData, importData } from '$lib/fetch';
-  import { getEmptyRow } from '$lib/form';
-  import { activeIndex, data, formValid } from '$lib/stores';
+  import { downloadData } from '$lib/data/download';
+  import { loadData } from '$lib/data/load';
+  import { activeIndex, areaProperties, data, formValid, survey } from '$lib/stores';
+
+  const getEmptyRow = () => {
+    const row: Record<string, unknown> = {};
+    for (const key of $areaProperties) row[key] = null;
+    for (const s of $survey) row[s.name] = s.default;
+    return row;
+  };
 
   const addLocation = () => {
     $data = [...$data, getEmptyRow()];
@@ -22,13 +29,15 @@
 
 <nav>
   <div class="tabs">
-    <label class="button" for="upload">↑ xlsx</label>
-    <input on:change={importData} type="file" name="upload" id="upload" accept=".xlsx" />
-    <button disabled={!$formValid || !$data.length} class="button" on:click={exportData}>
-      ↓ xlsx
+    <label class="button" for="upload">↑ data.xlsx</label>
+    <input on:change={loadData} type="file" name="upload" id="upload" accept=".xlsx" />
+    <button disabled={!$formValid || !$data.length} class="button" on:click={downloadData}>
+      ↓ data.xlsx
     </button>
   </div>
-  <button disabled={!$formValid} class="info" on:click={addLocation}> + location </button>
+  <button disabled={!$formValid} class:info={$formValid} on:click={addLocation}>
+    + location
+  </button>
   <hr />
   <div class="overflow">
     {#each $data as row, index}

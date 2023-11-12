@@ -4,8 +4,8 @@
 </script>
 
 <main>
-  <Sidebar />
-  <Map />
+  <Sidebar root={true} />
+  <Map root={true} />
 </main>
 
 <style>

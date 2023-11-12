@@ -23,6 +23,7 @@
     $data.splice(index, 1);
     $data = $data;
     $formValid = true;
+    $activeIndex = -1;
   };
 </script>
 
@@ -31,7 +32,11 @@
     <div class="title">Properties</div>
     <div class="grow" />
     <input class="area-input" required value={row[$areaProperties[0]]} />
-    <button type="button" class="map" on:click={() => ($areaActive = !$areaActive)}>
+    <button
+      type="button"
+      class:info={!row[$areaProperties[0]] && !$areaActive}
+      on:click={() => ($areaActive = !$areaActive)}
+    >
       {$areaActive ? 'Cancel Update' : 'Click Map'}
     </button>
   </div>
@@ -132,13 +137,11 @@
     flex-grow: 1;
     padding: 0.5rem;
   }
-  button.map {
+  button.info {
     background-color: cornflowerblue;
     color: white;
-    flex-grow: 0;
-    width: initial;
   }
-  button.map:focus {
+  button.info:focus {
     outline: none;
   }
   button.success {

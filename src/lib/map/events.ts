@@ -35,7 +35,10 @@ const onClickArea = ({ point }: { point: PointLike }) => {
 
 export const addEvents = () => {
   const $map = get(map);
+  $map.off('mouseenter', 'areas', onMouseEnter);
   $map.on('mouseenter', 'areas', onMouseEnter);
+  $map.off('mouseleave', 'areas', onMouseLeave);
   $map.on('mouseleave', 'areas', onMouseLeave);
+  $map.off('click', 'areas', onClickArea);
   $map.on('click', 'areas', onClickArea);
 };
