@@ -1,7 +1,12 @@
 <script lang="ts">
+  import { page } from '$app/stores';
   import Map from '$lib/components/Map.svelte';
   import Sidebar from '$lib/components/Sidebar.svelte';
 </script>
+
+<svelte:head>
+  <link rel="manifest" href={`/${$page.params.slug}/`} />
+</svelte:head>
 
 <main>
   <Sidebar />

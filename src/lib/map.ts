@@ -22,8 +22,8 @@ export const setBounds = async (geojsonURL: string) => {
 
 export const init = async () => {
   const $page = get(page);
-  const { instance } = $page.params;
-  const geojsonURL = `${PUBLIC_DATA}/${instance}/areas.geojson`;
+  const { slug } = $page.params;
+  const geojsonURL = `${PUBLIC_DATA}/${slug}/areas.geojson`;
   await setBounds(geojsonURL);
   const $map = get(map);
   const $areaProperties = get(areaProperties);

@@ -14,8 +14,8 @@ const toJSON = async (workbook: Excel.Workbook, sheetName: string) => {
 
 export const importForm = async () => {
   const $page = get(page);
-  const { instance } = $page.params;
-  const res = await fetch(`${PUBLIC_DATA}/${instance}/form.xlsx`);
+  const { slug } = $page.params;
+  const res = await fetch(`${PUBLIC_DATA}/${slug}/form.xlsx`);
   const file = await res.arrayBuffer();
   const workbook = new Excel.Workbook();
   await workbook.xlsx.load(file);
