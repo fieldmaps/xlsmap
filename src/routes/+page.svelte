@@ -3,6 +3,10 @@
   import Sidebar from '$lib/components/Sidebar.svelte';
 </script>
 
+<svelte:head>
+  <link rel="manifest" href="/" />
+</svelte:head>
+
 <main>
   <Sidebar root={true} />
   <Map root={true} />
