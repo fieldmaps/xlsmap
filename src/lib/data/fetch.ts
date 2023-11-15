@@ -1,8 +1,7 @@
 import { page } from '$app/stores';
 import { PUBLIC_DATA } from '$env/static/public';
-import { loadForm } from '$lib/data/load';
+import { loadForm, loadGeoJSON } from '$lib/data/load';
 import { initMap } from '$lib/map/init';
-import { areaGeoJSON } from '$lib/stores';
 import { get } from 'svelte/store';
 
 export const fetchAreas = async () => {
@@ -11,7 +10,7 @@ export const fetchAreas = async () => {
   const geojsonURL = `${PUBLIC_DATA}/${slug}/areas.geojson`;
   const response = await fetch(geojsonURL);
   const geojson = await response.json();
-  areaGeoJSON.set(geojson);
+  loadGeoJSON(geojson);
   initMap();
 };
 

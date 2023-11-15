@@ -13,7 +13,7 @@
     [180, 90],
   ];
 
-  onMount(async () => {
+  onMount(() => {
     $map = new Map({
       attributionControl: false,
       container,

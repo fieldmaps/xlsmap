@@ -1,12 +1,12 @@
 <script lang="ts">
   import { fileToBuffer, fileToJSON } from '$lib/data/convert';
-  import { loadForm } from '$lib/data/load';
+  import { loadForm, loadGeoJSON } from '$lib/data/load';
   import { initMap } from '$lib/map/init';
-  import { activeIndex, areaGeoJSON, areaProperties, survey } from '$lib/stores';
+  import { activeIndex, areaProperties, survey } from '$lib/stores';
 
   export const importGeoJSON = async (e: Event) => {
-    const geoJSON = await fileToJSON(e.target.files[0]);
-    areaGeoJSON.set(geoJSON);
+    const geojson = await fileToJSON(e.target.files[0]);
+    loadGeoJSON(geojson);
     initMap();
   };
 

@@ -1,5 +1,13 @@
 import { excelToJSON, fileToBuffer } from '$lib/data/convert';
-import { activeIndex, areaProperties, choices, data, formValid, survey } from '$lib/stores';
+import {
+  activeIndex,
+  areaGeoJSON,
+  areaProperties,
+  choices,
+  data,
+  formValid,
+  survey,
+} from '$lib/stores';
 import Excel from 'exceljs';
 import { get } from 'svelte/store';
 
@@ -19,4 +27,13 @@ export const loadForm = async (file: ArrayBuffer) => {
   if (get(areaProperties).length && !get(survey).length) formValid.set(true);
   survey.set(await excelToJSON(workbook, 'survey'));
   choices.set(await excelToJSON(workbook, 'choices'));
+};
+
+export const loadGeoJSON = ($areaGeoJSON) => {
+  const { properties } = $areaGeoJSON.features[0];
+  if (get(survey).length && !get(areaProperties).length) formValid.set(true);
+  areaProperties.set(Object.keys(properties));
+  for (const feature of $areaGeoJSON.features)
+    feature.id = Object.values(feature.properties).join('|');
+  areaGeoJSON.set($areaGeoJSON);
 };

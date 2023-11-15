@@ -1,38 +1,44 @@
 <script lang="ts">
   import { PUBLIC_NAME } from '$env/static/public';
-  import Filter from '$lib/components/Filter.svelte';
   import Manage from '$lib/components/Manage.svelte';
   import Playground from '$lib/components/Playground.svelte';
+  import Visualize from '$lib/components/Visualize.svelte';
   import { fetchForm } from '$lib/data/fetch';
-  import { formValid } from '$lib/stores';
+  import { addDataLayer, removeDataLayer } from '$lib/map/data';
+  import { data, formValid } from '$lib/stores';
   import { onMount } from 'svelte';
 
   const MANAGE = 'MANAGE';
-  const FILTER = 'FILTER';
+  const VISUALIZE = 'VISUALIZE';
 
   export let root: boolean;
   let tab = MANAGE;
   if (!root) onMount(fetchForm);
+
+  const onManage = () => {
+    tab = MANAGE;
+    removeDataLayer();
+  };
+
+  const onVisualize = () => {
+    tab = VISUALIZE;
+    addDataLayer();
+  };
 </script>
 
 <nav>
   <h1>{PUBLIC_NAME}</h1>
   <div class="tabs">
-    <button
-      class="left"
-      class:active={tab === MANAGE}
-      on:click={() => (tab = MANAGE)}
-      disabled={!$formValid}
-    >
+    <button class="left" class:active={tab === MANAGE} on:click={onManage} disabled={!$formValid}>
       ☰ Manage
     </button>
     <button
       class="right"
-      class:active={tab === FILTER}
-      on:click={() => (tab = FILTER)}
-      disabled={!$formValid}
+      class:active={tab === VISUALIZE}
+      on:click={onVisualize}
+      disabled={!$formValid || !$data.length}
     >
-      ▼ Filter
+      ◔ Visualize
     </button>
   </div>
   {#if tab === MANAGE}
@@ -40,8 +46,8 @@
       <Playground />
     {/if}
     <Manage />
-  {:else if tab === FILTER}
-    <Filter />
+  {:else if tab === VISUALIZE}
+    <Visualize />
   {/if}
 </nav>
 

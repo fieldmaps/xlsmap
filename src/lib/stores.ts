@@ -11,3 +11,5 @@ export const data = writable([]);
 export const formValid = writable(false);
 export const map: Writable<Map> = writable();
 export const survey: Writable<unknown[]> = writable([]);
+export const vizField = writable(null);
+export const vizMethod = writable(null);
