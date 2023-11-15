@@ -50,7 +50,9 @@
         >
           {index + 1}
         </button>
-        <Form {row} {index} />
+        {#if $activeIndex === index}
+          <Form {row} {index} />
+        {/if}
       </section>
     {/each}
   </div>

@@ -27,7 +27,7 @@
   };
 </script>
 
-<form on:submit={closeDrawer} class="drawer" class:hidden={$activeIndex !== index}>
+<form on:submit={closeDrawer} class="drawer">
   <div class="title-group">
     <div class="title">Properties</div>
     <div class="grow" />
@@ -215,9 +215,6 @@
     border-radius: 0 0 0.5rem 0.5rem;
     overflow: auto;
     background-color: var(--background-color-1);
-  }
-  .drawer.hidden {
-    display: none;
   }
   .grow {
     flex: 100;
