@@ -79,5 +79,7 @@ export const addDataLayer = () => {
 
 export const removeDataLayer = () => {
   const $map = get(map);
+  const $areaGeoJSON = get(areaGeoJSON);
   $map.getLayer('areas-fill') && $map.removeLayer('areas-fill');
+  $map.getSource('areas')?.setData($areaGeoJSON);
 };
