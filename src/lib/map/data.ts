@@ -35,7 +35,10 @@ export const addDataLayer = () => {
   const $vizMethod = get(vizMethod);
   const $vizChoice = get(vizChoice);
   if ($vizField) {
-    if (!$vizMethod && !$vizChoice) return;
+    if (!$vizMethod && !$vizChoice) {
+      removeDataLayer();
+      return;
+    }
     const $areaGeoJSON = get(areaGeoJSON);
     const $areaProperties = get(areaProperties);
     const $data = get(data);
@@ -49,8 +52,8 @@ export const addDataLayer = () => {
       ...feature,
       properties: { ...feature.properties, dataVizValue: dataAgg.get(feature.id) ?? 0 },
     }));
+    removeDataLayer();
     $map.getSource('areas')?.setData({ type: 'FeatureCollection', features });
-    $map.getLayer('areas-fill') && $map.removeLayer('areas-fill');
     $map.addLayer(
       {
         id: 'areas-fill',
