@@ -1,7 +1,18 @@
 <script lang="ts">
   import { downloadScreenshot } from '$lib/data/download';
   import { addDataLayer } from '$lib/map/data';
-  import { survey, vizField, vizMethod } from '$lib/stores';
+  import { choices, survey, vizChoice, vizField, vizMethod, vizType } from '$lib/stores';
+
+  const isVizField = ({ type }: { type: string }) =>
+    ['integer', 'select_one'].includes(type.split(' ')[0]);
+
+  const onChangeField = (e: Event) => {
+    const [type, name] = e.target.value.split('|');
+    $vizType = type;
+    $vizField = name;
+    $vizChoice = null;
+    addDataLayer();
+  };
 </script>
 
 <section>
@@ -12,32 +23,50 @@
     <div class="select-group">
       <select
         id="select-field"
-        bind:value={$vizField}
+        value={`${$vizType}|${$vizField}`}
         class:placeholder={!$vizField}
-        on:change={addDataLayer}
+        on:change={onChangeField}
       >
-        <option hidden={$vizField !== null} disabled selected value={null}>select one</option>
-        {#each $survey.filter((x) => x.type === 'integer') as field}
-          <option value={field.name}>{field.label}</option>
+        <option hidden={$vizField !== ''} disabled selected value="|">select one</option>
+        {#each $survey.filter(isVizField) as field}
+          <option value={`${field.type}|${field.name}`}>{field.label}</option>
         {/each}
       </select>
     </div>
     <br />
-    <label for="select-field">Aggregation Method</label>
-    <div class="select-group">
-      <select
-        id="select-field"
-        bind:value={$vizMethod}
-        class:placeholder={!$vizMethod}
-        on:change={addDataLayer}
-      >
-        <option hidden={$vizMethod !== null} disabled selected value={null}>select one</option>
-        <option value="SUM">Sum</option>
-        <option value="MEAN">Mean</option>
-        <option value="MIN">Min</option>
-        <option value="MAX">Max</option>
-      </select>
-    </div>
+    {#if $vizType.split(' ')[0] === 'select_one'}
+      <label for="select-field">Category</label>
+      <div class="select-group">
+        <select
+          id="select-field"
+          bind:value={$vizChoice}
+          class:placeholder={!$vizChoice}
+          on:change={addDataLayer}
+        >
+          <option hidden={$vizChoice !== null} disabled selected value={null}>select one</option>
+          {#each $choices.filter(({ list_name }) => list_name === $vizType.split(' ')[1]) as choice}
+            <option value={choice.name}>{choice.label}</option>
+          {/each}
+        </select>
+      </div>
+    {/if}
+    {#if $vizType === 'integer'}
+      <label for="select-field">Aggregation</label>
+      <div class="select-group">
+        <select
+          id="select-field"
+          bind:value={$vizMethod}
+          class:placeholder={!$vizMethod}
+          on:change={addDataLayer}
+        >
+          <option hidden={$vizMethod !== null} disabled selected value={null}>select one</option>
+          <option value="SUM">Sum</option>
+          <option value="MEAN">Mean</option>
+          <option value="MIN">Min</option>
+          <option value="MAX">Max</option>
+        </select>
+      </div>
+    {/if}
   </form>
 </section>
 

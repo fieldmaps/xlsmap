@@ -5,6 +5,7 @@ import {
   formValid,
   map,
   survey,
+  vizChoice,
   vizField,
   vizMethod,
 } from '$lib/stores';
@@ -32,43 +33,45 @@ export const setProperties = ($areaGeoJSON) => {
 export const addDataLayer = () => {
   const $vizField = get(vizField);
   const $vizMethod = get(vizMethod);
-  if (!$vizField || !$vizMethod) return;
-  const $areaGeoJSON = get(areaGeoJSON);
-  const $areaProperties = get(areaProperties);
-  const $data = get(data);
-  const $map = get(map);
-  const dataAgg = rollup(
-    $data,
-    (v) => methods[$vizMethod](v, (d) => d[$vizField]),
-    (d) => $areaProperties.map((prop) => d[prop]).join('|'),
-  );
-  const max = Math.max(...dataAgg.values(), 1e-99);
-  const features = $areaGeoJSON.features.map((feature) => ({
-    ...feature,
-    properties: { ...feature.properties, dataVizValue: dataAgg.get(feature.id) ?? 0 },
-  }));
-  $map.getSource('areas')?.setData({ type: 'FeatureCollection', features });
-  $map.getLayer('areas-fill') && $map.removeLayer('areas-fill');
-  $map.addLayer(
-    {
-      id: 'areas-fill',
-      source: 'areas',
-      type: 'fill',
-      paint: {
-        'fill-color': [
-          'interpolate',
-          ['linear'],
-          ['get', 'dataVizValue'],
-          0,
-          '#fcfbfd',
-          max,
-          '#3f007d',
-        ],
-        'fill-opacity': 0.75,
+  const $vizChoice = get(vizChoice);
+  if ($vizField) {
+    if (!$vizMethod && !$vizChoice) return;
+    const $areaGeoJSON = get(areaGeoJSON);
+    const $areaProperties = get(areaProperties);
+    const $data = get(data);
+    const $map = get(map);
+    const aggFunc = $vizChoice
+      ? (v) => sum(v, (d) => (d[$vizField] === $vizChoice ? 1 : 0))
+      : (v) => methods[$vizMethod](v, (d) => d[$vizField]);
+    const dataAgg = rollup($data, aggFunc, (d) => $areaProperties.map((prop) => d[prop]).join('|'));
+    const max = Math.max(...dataAgg.values(), 1e-99);
+    const features = $areaGeoJSON.features.map((feature) => ({
+      ...feature,
+      properties: { ...feature.properties, dataVizValue: dataAgg.get(feature.id) ?? 0 },
+    }));
+    $map.getSource('areas')?.setData({ type: 'FeatureCollection', features });
+    $map.getLayer('areas-fill') && $map.removeLayer('areas-fill');
+    $map.addLayer(
+      {
+        id: 'areas-fill',
+        source: 'areas',
+        type: 'fill',
+        paint: {
+          'fill-color': [
+            'interpolate',
+            ['linear'],
+            ['get', 'dataVizValue'],
+            0,
+            '#fcfbfd',
+            max,
+            '#3f007d',
+          ],
+          'fill-opacity': 0.75,
+        },
       },
-    },
-    'areas-outline',
-  );
+      'areas-outline',
+    );
+  }
 };
 
 export const removeDataLayer = () => {
