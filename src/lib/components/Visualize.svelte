@@ -1,10 +1,29 @@
 <script lang="ts">
   import { downloadScreenshot } from '$lib/data/download';
   import { addDataLayer } from '$lib/map/data';
-  import { choices, survey, vizChoice, vizField, vizMethod, vizType } from '$lib/stores';
+  import {
+    choices,
+    survey,
+    vizChoice,
+    vizDateField,
+    vizDateFrom,
+    vizDateTo,
+    vizField,
+    vizMethod,
+    vizType,
+  } from '$lib/stores';
 
   const isVizField = ({ type }: { type: string }) =>
     ['integer', 'select_one'].includes(type.split(' ')[0]);
+
+  const isVizDateField = ({ type }: { type: string }) => type === 'date';
+
+  const resetDate = () => {
+    $vizDateField = null;
+    $vizDateFrom = null;
+    $vizDateTo = null;
+    addDataLayer();
+  };
 
   const onChangeField = (e: Event) => {
     const [type, name] = e.target.value.split('|');
@@ -13,64 +32,131 @@
     $vizChoice = null;
     addDataLayer();
   };
+
+  const onChangeChoice = () => {
+    $vizMethod = null;
+    addDataLayer();
+  };
 </script>
 
 <section>
   <button on:click={downloadScreenshot}>↓ map.png</button>
   <hr />
   <form>
-    <label for="select-field">Display Field</label>
-    <div class="select-group">
-      <select
-        id="select-field"
-        value={`${$vizType}|${$vizField}`}
-        class:placeholder={!$vizField}
-        on:change={onChangeField}
-      >
-        <option hidden={$vizField !== ''} disabled selected value="|">select one</option>
-        {#each $survey.filter(isVizField) as field}
-          <option value={`${field.type}|${field.name}`}>{field.label}</option>
-        {/each}
-      </select>
-    </div>
-    <br />
-    {#if $vizType.split(' ')[0] === 'select_one'}
-      <label for="select-field">Category</label>
-      <div class="select-group">
-        <select
-          id="select-field"
-          bind:value={$vizChoice}
-          class:placeholder={!$vizChoice}
-          on:change={addDataLayer}
-        >
-          <option hidden={$vizChoice !== null} disabled selected value={null}>select one</option>
-          {#each $choices.filter(({ list_name }) => list_name === $vizType.split(' ')[1]) as choice}
-            <option value={choice.name}>{choice.label}</option>
-          {/each}
-        </select>
+    <fieldset>
+      <legend>Display</legend>
+      <div class="date-group">
+        <label for="select-field">Field</label>
+        <div class="select-group">
+          <select
+            class:placeholder={!$vizField}
+            id="select-field"
+            on:change={onChangeField}
+            value={`${$vizType}|${$vizField}`}
+          >
+            <option hidden={$vizField !== ''} disabled selected value="|">select one</option>
+            {#each $survey.filter(isVizField) as field}
+              <option value={`${field.type}|${field.name}`}>{field.label}</option>
+            {/each}
+          </select>
+        </div>
       </div>
-    {/if}
-    {#if $vizType === 'integer'}
-      <label for="select-field">Aggregation</label>
-      <div class="select-group">
-        <select
-          id="select-field"
-          bind:value={$vizMethod}
-          class:placeholder={!$vizMethod}
-          on:change={addDataLayer}
-        >
-          <option hidden={$vizMethod !== null} disabled selected value={null}>select one</option>
-          <option value="SUM">Sum</option>
-          <option value="MEAN">Mean</option>
-          <option value="MIN">Min</option>
-          <option value="MAX">Max</option>
-        </select>
-      </div>
+      {#if $vizType.split(' ')[0] === 'select_one'}
+        <div class="date-group">
+          <label for="select-field">Category</label>
+          <div class="select-group">
+            <select
+              bind:value={$vizChoice}
+              class:placeholder={!$vizChoice}
+              id="select-field"
+              on:change={onChangeChoice}
+            >
+              <option hidden={$vizChoice} disabled selected value={null}>select one</option>
+              {#each $choices.filter(({ list_name }) => list_name === $vizType.split(' ')[1]) as choice}
+                <option value={choice.name}>{choice.label}</option>
+              {/each}
+            </select>
+          </div>
+        </div>
+      {/if}
+      {#if $vizType === 'integer'}
+        <div class="date-group">
+          <label for="select-field">Aggregation</label>
+          <div class="select-group">
+            <select
+              bind:value={$vizMethod}
+              class:placeholder={!$vizMethod}
+              id="select-field"
+              on:change={addDataLayer}
+            >
+              <option hidden={$vizMethod} disabled selected value={null}>select one</option>
+              <option value="SUM">Sum</option>
+              <option value="MEAN">Mean</option>
+              <option value="MIN">Min</option>
+              <option value="MAX">Max</option>
+            </select>
+          </div>
+        </div>
+      {/if}
+    </fieldset>
+    {#if $survey.filter(isVizDateField).length}
+      <fieldset>
+        <legend>Filter</legend>
+        <div class="date-group">
+          <label for="select-field">Date</label>
+          <div class="select-group">
+            <select
+              bind:value={$vizDateField}
+              class:placeholder={!$vizDateField}
+              id="select-field"
+              on:change={addDataLayer}
+            >
+              <option hidden={$vizDateField} disabled selected value={null}> select one </option>
+              {#each $survey.filter(isVizDateField) as field}
+                <option value={field.name}>{field.label}</option>
+              {/each}
+            </select>
+            {#if $vizDateField}
+              <button type="button" class="reset" on:click={resetDate}>✕</button>
+            {/if}
+          </div>
+        </div>
+        {#if $vizDateField}
+          <div class="date-group">
+            <label for="date-filter">From</label>
+            <input
+              bind:value={$vizDateFrom}
+              class:placeholder={!$vizDateFrom}
+              class="select-group"
+              max={$vizDateTo}
+              on:change={addDataLayer}
+              type="date"
+            />
+          </div>
+          <div class="date-group">
+            <label for="date-filter">To</label>
+            <input
+              on:change={addDataLayer}
+              bind:value={$vizDateTo}
+              class:placeholder={!$vizDateTo}
+              class="select-group"
+              min={$vizDateFrom}
+              type="date"
+            />
+          </div>
+        {/if}
+      </fieldset>
     {/if}
   </form>
 </section>
 
 <style>
+  @media (prefers-color-scheme: dark) {
+    input[type='date']::-webkit-inner-spin-button,
+    input[type='date']::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+  }
   button {
     background-color: var(--background-color-1);
     border-radius: 0.5rem;
@@ -85,6 +171,10 @@
   button:hover:not([disabled]) {
     filter: brightness(110%);
   }
+  fieldset {
+    border-color: var(--background-color-2);
+    margin: 0.5rem;
+  }
   hr {
     width: 100%;
   }
@@ -93,6 +183,7 @@
     flex-direction: column;
     gap: 0.5rem;
   }
+  input,
   select {
     border-radius: 0.25rem;
     border: 1px solid hsl(0, 0%, 56%);
@@ -102,9 +193,22 @@
     resize: vertical;
     flex: 1;
   }
+  .date-group {
+    align-items: stretch;
+    display: flex;
+    flex-direction: column;
+    margin: 0.5rem 0;
+  }
   .placeholder {
     color: var(--color-2);
     font-weight: 200;
+  }
+  .reset {
+    background-color: var(--background-color);
+    flex-grow: 0;
+    margin: 0 0 0 0.5rem;
+    padding: 0;
+    width: fit-content;
   }
   .select-group {
     display: flex;

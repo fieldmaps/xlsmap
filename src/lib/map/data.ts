@@ -6,6 +6,9 @@ import {
   map,
   survey,
   vizChoice,
+  vizDateField,
+  vizDateFrom,
+  vizDateTo,
   vizField,
   vizMethod,
 } from '$lib/stores';
@@ -17,6 +20,26 @@ const methods = {
   MEAN: mean,
   MIN: min,
   MAX: max,
+};
+
+const aggGroup = (d) => {
+  const $areaProperties = get(areaProperties);
+  return $areaProperties.map((prop) => d[prop]).join('|');
+};
+
+const getData = () => {
+  const $data = get(data);
+  const $vizDateFrom = get(vizDateFrom);
+  const $vizDateTo = get(vizDateTo);
+  if (!$vizDateFrom && !$vizDateTo) return $data;
+  const $vizDateField = get(vizDateField);
+  const vizDateFromValue = new Date($vizDateFrom);
+  const vizDateToValue = new Date($vizDateTo);
+  return $data.filter((row) => {
+    const dateFrom = $vizDateFrom ? row[$vizDateField] >= vizDateFromValue : true;
+    const dateTo = $vizDateTo ? row[$vizDateField] <= vizDateToValue : true;
+    return dateFrom && dateTo;
+  });
 };
 
 export const setProperties = ($areaGeoJSON) => {
@@ -40,13 +63,11 @@ export const addDataLayer = () => {
       return;
     }
     const $areaGeoJSON = get(areaGeoJSON);
-    const $areaProperties = get(areaProperties);
-    const $data = get(data);
     const $map = get(map);
     const aggFunc = $vizChoice
       ? (v) => sum(v, (d) => (d[$vizField] === $vizChoice ? 1 : 0))
       : (v) => methods[$vizMethod](v, (d) => d[$vizField]);
-    const dataAgg = rollup($data, aggFunc, (d) => $areaProperties.map((prop) => d[prop]).join('|'));
+    const dataAgg = rollup(getData(), aggFunc, aggGroup);
     const max = Math.max(...dataAgg.values(), 1e-99);
     const features = $areaGeoJSON.features.map((feature) => ({
       ...feature,
