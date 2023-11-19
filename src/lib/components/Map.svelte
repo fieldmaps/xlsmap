@@ -63,6 +63,7 @@
     bottom: 0.5rem;
     left: 0.5rem;
     position: absolute;
+    text-shadow: 0 0 0.3rem white;
   }
   .legend-column {
     display: flex;
