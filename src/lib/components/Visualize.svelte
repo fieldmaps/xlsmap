@@ -2,6 +2,7 @@
   import { downloadScreenshot } from '$lib/data/download';
   import { addDataLayer } from '$lib/map/data';
   import {
+    areaProperties,
     choices,
     survey,
     vizChoice,
@@ -9,7 +10,7 @@
     vizDateFrom,
     vizDateTo,
     vizField,
-    vizHoverValue,
+    vizHover,
     vizMethod,
     vizType,
     vizVisable,
@@ -151,9 +152,18 @@
     {#if $vizVisable}
       <fieldset>
         <legend>Hover</legend>
-        {$vizMethod ?? 'Count'}: {$vizHoverValue % 1
-          ? format('.1f')($vizHoverValue)
-          : $vizHoverValue ?? ''}
+        <div class="row-group">
+          <div>Area:</div>
+          <div>{$vizHover[$areaProperties[0]] ?? ''}</div>
+        </div>
+        <div class="row-group">
+          <div>{$vizMethod ?? 'Count'}:</div>
+          <div>
+            {$vizHover.dataVizValue % 1
+              ? format('.1f')($vizHover.dataVizValue)
+              : $vizHover.dataVizValue ?? ''}
+          </div>
+        </div>
       </fieldset>
     {/if}
   </form>
@@ -225,6 +235,10 @@
     margin: 0 0 0 0.5rem;
     padding: 0;
     width: fit-content;
+  }
+  .row-group {
+    display: flex;
+    justify-content: space-between;
   }
   .select-group {
     display: flex;

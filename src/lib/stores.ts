@@ -20,4 +20,4 @@ export const vizMax = writable(0);
 export const vizMethod = writable(null);
 export const vizType = writable('');
 export const vizVisable = writable(false);
-export const vizHoverValue = writable(null);
+export const vizHover = writable({});

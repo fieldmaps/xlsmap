@@ -1,4 +1,4 @@
-import { activeIndex, areaActive, areaProperties, data, map, vizHoverValue } from '$lib/stores';
+import { activeIndex, areaActive, areaProperties, data, map, vizHover } from '$lib/stores';
 import type { PointLike } from 'maplibre-gl';
 import { get } from 'svelte/store';
 
@@ -37,12 +37,12 @@ const onFillHover = ({ point }: { point: PointLike }) => {
   const $map = get(map);
   const features = $map.queryRenderedFeatures(point, { layers: ['areas-fill'] });
   if (features.length) {
-    const { dataVizValue } = features[0].properties;
+    const { properties } = features[0];
     $map.getCanvas().style.cursor = 'pointer';
-    vizHoverValue.set(dataVizValue);
+    vizHover.set(properties);
   } else {
     $map.getCanvas().style.cursor = 'inherit';
-    vizHoverValue.set(null);
+    vizHover.set({});
   }
 };
 

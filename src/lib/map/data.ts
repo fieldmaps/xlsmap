@@ -11,7 +11,7 @@ import {
   vizDateFrom,
   vizDateTo,
   vizField,
-  vizHoverValue,
+  vizHover,
   vizMax,
   vizMethod,
   vizVisable,
@@ -112,5 +112,5 @@ export const removeDataLayer = () => {
   $map.getLayer('areas-fill') && $map.removeLayer('areas-fill');
   $map.getSource('areas')?.setData($areaGeoJSON);
   vizVisable.set(false);
-  vizHoverValue.set(null);
+  vizHover.set({});
 };
