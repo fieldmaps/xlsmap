@@ -14,6 +14,7 @@
     vizType,
     vizVisable,
   } from '$lib/stores';
+  import { format } from 'd3-format';
 
   const isVizField = ({ type }: { type: string }) =>
     ['integer', 'select_one'].includes(type.split(' ')[0]);
@@ -150,7 +151,9 @@
     {#if $vizVisable}
       <fieldset>
         <legend>Hover</legend>
-        {$vizMethod ?? 'Count'}: {$vizHoverValue ?? ''}
+        {$vizMethod ?? 'Count'}: {$vizHoverValue % 1
+          ? format('.1f')($vizHoverValue)
+          : $vizHoverValue ?? ''}
       </fieldset>
     {/if}
   </form>

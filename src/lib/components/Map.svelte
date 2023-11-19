@@ -2,6 +2,7 @@
   import { PUBLIC_API } from '$env/static/public';
   import { fetchAreas } from '$lib/data/fetch';
   import { map, vizMax, vizVisable } from '$lib/stores';
+  import { format } from 'd3-format';
   import { Map, NavigationControl, ScaleControl, type LngLatBoundsLike } from 'maplibre-gl';
   import 'maplibre-gl/dist/maplibre-gl.css';
   import { onMount } from 'svelte';
@@ -37,7 +38,7 @@
           <div class="legend-color"></div>
           <div class="legend-column">
             <div>0</div>
-            <div>{$vizMax}</div>
+            <div>{$vizMax % 1 ? format('.1f')($vizMax) : $vizMax}</div>
           </div>
         </fieldset>
       </div>

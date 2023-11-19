@@ -20,6 +20,7 @@
     "@sveltejs/adapter-cloudflare": "^2.3.3",
     "@sveltejs/kit": "^1.27.6",
     "@types/d3-array": "^3.2.1",
+    "@types/d3-format": "^3.0.4",
     "@types/merge-images": "^1.2.4",
     "@types/papaparse": "^5.3.11",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
@@ -39,6 +40,7 @@
   "dependencies": {
     "@turf/bbox": "^6.5.0",
     "d3-array": "^3.2.4",
+    "d3-format": "^3.1.0",
     "exceljs": "^4.4.0",
     "html-to-image": "^1.11.11",
     "maplibre-gl": "^3.6.1",
