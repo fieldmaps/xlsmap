@@ -31,10 +31,6 @@
     $vizType = type;
     $vizField = name;
     $vizChoice = null;
-    addDataLayer();
-  };
-
-  const onChangeChoice = () => {
     $vizMethod = null;
     addDataLayer();
   };
@@ -72,7 +68,7 @@
               bind:value={$vizChoice}
               class:placeholder={!$vizChoice}
               id="select-field"
-              on:change={onChangeChoice}
+              on:change={addDataLayer}
             >
               <option hidden={$vizChoice} disabled selected value={null}>select one</option>
               {#each $choices.filter(({ list_name }) => list_name === $vizType.split(' ')[1]) as choice}
