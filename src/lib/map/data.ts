@@ -10,7 +10,9 @@ import {
   vizDateFrom,
   vizDateTo,
   vizField,
+  vizMax,
   vizMethod,
+  vizVisable,
 } from '$lib/stores';
 import { max, mean, min, rollup, sum } from 'd3-array';
 import { get } from 'svelte/store';
@@ -69,11 +71,13 @@ export const addDataLayer = () => {
       : (v) => methods[$vizMethod](v, (d) => d[$vizField]);
     const dataAgg = rollup(getData(), aggFunc, aggGroup);
     const max = Math.max(...dataAgg.values(), 1e-99);
+    vizMax.set(max);
     const features = $areaGeoJSON.features.map((feature) => ({
       ...feature,
       properties: { ...feature.properties, dataVizValue: dataAgg.get(feature.id) ?? 0 },
     }));
     removeDataLayer();
+    vizVisable.set(true);
     $map.getSource('areas')?.setData({ type: 'FeatureCollection', features });
     $map.addLayer(
       {
@@ -103,4 +107,5 @@ export const removeDataLayer = () => {
   const $areaGeoJSON = get(areaGeoJSON);
   $map.getLayer('areas-fill') && $map.removeLayer('areas-fill');
   $map.getSource('areas')?.setData($areaGeoJSON);
+  vizVisable.set(false);
 };

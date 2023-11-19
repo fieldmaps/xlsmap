@@ -22,17 +22,17 @@ export const excelToJSON = async (workbook: Excel.Workbook, sheetName = '') => {
 export const fileToJSON = (file: File): Promise<JSON> => {
   const reader = new FileReader();
   return new Promise((resolve, reject) => {
-    reader.readAsText(file);
     reader.onload = () => resolve(JSON.parse(reader.result));
     reader.onerror = reject;
+    reader.readAsText(file);
   });
 };
 
 export const fileToBuffer = (file: File): Promise<ArrayBuffer> => {
   const reader = new FileReader();
   return new Promise((resolve, reject) => {
-    reader.readAsArrayBuffer(file);
     reader.onload = () => resolve(reader.result);
     reader.onerror = reject;
+    reader.readAsArrayBuffer(file);
   });
 };

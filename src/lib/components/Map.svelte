@@ -1,7 +1,7 @@
 <script lang="ts">
   import { PUBLIC_API } from '$env/static/public';
   import { fetchAreas } from '$lib/data/fetch';
-  import { map } from '$lib/stores';
+  import { map, vizMax, vizVisable } from '$lib/stores';
   import { Map, NavigationControl, ScaleControl, type LngLatBoundsLike } from 'maplibre-gl';
   import 'maplibre-gl/dist/maplibre-gl.css';
   import { onMount } from 'svelte';
@@ -27,11 +27,53 @@
   });
 </script>
 
-<div bind:this={container} />
+<div class="container">
+  <div class="map" bind:this={container} />
+  {#if $vizVisable}
+    <div class="legend">
+      <div id="map-legend">
+        <fieldset>
+          <legend>Legend</legend>
+          <div class="legend-color"></div>
+          <div class="legend-column">
+            <div>0</div>
+            <div>{$vizMax}</div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  {/if}
+</div>
 
 <style>
-  div {
-    height: 100%;
+  .map,
+  .container {
     flex-grow: 1;
+    height: 100%;
+  }
+  fieldset {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .container {
+    position: relative;
+  }
+  .legend {
+    bottom: 0.5rem;
+    left: 0.5rem;
+    position: absolute;
+  }
+  .legend-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .legend-column > div {
+    height: 1rem;
+  }
+  .legend-color {
+    background: linear-gradient(to bottom, #fcfbfd 0%, #3f007d 100%);
+    height: 5rem;
+    width: 1rem;
   }
 </style>

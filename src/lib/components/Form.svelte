@@ -49,7 +49,7 @@
   <hr />
   {#each $survey as survey}
     <div class="column-group">
-      <label for={`${index}-${survey.name}`}>
+      <label for="{index}-{survey.name}">
         <span>{survey.label}</span>
         <span class="optional">
           {survey.required?.toLowerCase() !== 'yes' ? '– optional' : ''}
@@ -58,14 +58,14 @@
       {#if survey.appearance === 'multiline'}
         <textarea
           bind:value={row[survey.name]}
-          id={`${index}-${survey.name}`}
+          id="{index}-{survey.name}"
           on:invalid={onInvalid}
           required={survey.required?.toLowerCase() === 'yes'}
         />
       {:else if survey.type === 'text'}
         <input
           bind:value={row[survey.name]}
-          id={`${index}-${survey.name}`}
+          id="{index}-{survey.name}"
           on:invalid={onInvalid}
           required={survey.required?.toLowerCase() === 'yes'}
         />
@@ -73,7 +73,7 @@
         <input
           bind:value={row[survey.name]}
           class:placeholder={row[survey.name] === survey.default}
-          id={`${index}-${survey.name}`}
+          id="{index}-{survey.name}"
           on:invalid={onInvalid}
           pattern="\d+"
           required={survey.required?.toLowerCase() === 'yes'}
@@ -83,7 +83,7 @@
       {:else if survey.type === 'date'}
         <input
           class:placeholder={!row[survey.name]}
-          id={`${index}-${survey.name}`}
+          id="{index}-{survey.name}"
           on:change={(e) => (row[survey.name] = e.target.valueAsDate)}
           on:invalid={onInvalid}
           required={survey.required?.toLowerCase() === 'yes'}
@@ -95,7 +95,7 @@
           <select
             bind:value={row[survey.name]}
             class:placeholder={!row[survey.name]}
-            id={`${index}-${survey.name}`}
+            id="{index}-{survey.name}"
             on:invalid={onInvalid}
             required={survey.required?.toLowerCase() === 'yes'}
           >

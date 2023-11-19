@@ -11,6 +11,7 @@
     vizField,
     vizMethod,
     vizType,
+    vizVisable,
   } from '$lib/stores';
 
   const isVizField = ({ type }: { type: string }) =>
@@ -40,7 +41,9 @@
 </script>
 
 <section>
-  <button on:click={downloadScreenshot}>↓ map.png</button>
+  <button on:click={downloadScreenshot} class:info={$vizVisable} disabled={!$vizVisable}>
+    ↓ map.png
+  </button>
   <hr />
   <form>
     <fieldset>
@@ -52,11 +55,11 @@
             class:placeholder={!$vizField}
             id="select-field"
             on:change={onChangeField}
-            value={`${$vizType}|${$vizField}`}
+            value="{$vizType}|{$vizField}"
           >
             <option hidden={$vizField !== ''} disabled selected value="|">select one</option>
             {#each $survey.filter(isVizField) as field}
-              <option value={`${field.type}|${field.name}`}>{field.label}</option>
+              <option value="{field.type}|{field.name}">{field.label}</option>
             {/each}
           </select>
         </div>
@@ -171,9 +174,12 @@
   button:hover:not([disabled]) {
     filter: brightness(110%);
   }
+  button:disabled {
+    cursor: default;
+  }
   fieldset {
     border-color: var(--background-color-2);
-    margin: 0.5rem;
+    margin: 0.5rem 0;
   }
   hr {
     width: 100%;
@@ -192,6 +198,10 @@
     padding: 0 0.25rem;
     resize: vertical;
     flex: 1;
+  }
+  .info {
+    background-color: cornflowerblue;
+    color: white;
   }
   .date-group {
     align-items: stretch;
