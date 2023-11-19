@@ -1,3 +1,4 @@
+import { addHoverEvents, removeHoverEvents } from '$lib/map/events';
 import {
   areaGeoJSON,
   areaProperties,
@@ -18,10 +19,10 @@ import { max, mean, min, rollup, sum } from 'd3-array';
 import { get } from 'svelte/store';
 
 const methods = {
-  SUM: sum,
-  MEAN: mean,
-  MIN: min,
-  MAX: max,
+  Sum: sum,
+  Mean: mean,
+  Min: min,
+  Max: max,
 };
 
 const aggGroup = (d) => {
@@ -59,8 +60,9 @@ export const addDataLayer = () => {
   const $vizField = get(vizField);
   const $vizMethod = get(vizMethod);
   const $vizChoice = get(vizChoice);
+  const filteredData = getData();
   if ($vizField) {
-    if (!$vizMethod && !$vizChoice) {
+    if ((!$vizMethod && !$vizChoice) || !filteredData.length) {
       removeDataLayer();
       return;
     }
@@ -69,7 +71,7 @@ export const addDataLayer = () => {
     const aggFunc = $vizChoice
       ? (v) => sum(v, (d) => (d[$vizField] === $vizChoice ? 1 : 0))
       : (v) => methods[$vizMethod](v, (d) => d[$vizField]);
-    const dataAgg = rollup(getData(), aggFunc, aggGroup);
+    const dataAgg = rollup(filteredData, aggFunc, aggGroup);
     const max = Math.max(...dataAgg.values(), 1e-99);
     vizMax.set(max);
     const features = $areaGeoJSON.features.map((feature) => ({
@@ -94,15 +96,16 @@ export const addDataLayer = () => {
             max,
             '#3f007d',
           ],
-          'fill-opacity': 0.75,
         },
       },
       'areas-outline',
     );
+    addHoverEvents();
   }
 };
 
 export const removeDataLayer = () => {
+  removeHoverEvents();
   const $map = get(map);
   const $areaGeoJSON = get(areaGeoJSON);
   $map.getLayer('areas-fill') && $map.removeLayer('areas-fill');

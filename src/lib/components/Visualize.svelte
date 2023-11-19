@@ -9,6 +9,7 @@
     vizDateFrom,
     vizDateTo,
     vizField,
+    vizHoverValue,
     vizMethod,
     vizType,
     vizVisable,
@@ -89,10 +90,10 @@
               on:change={addDataLayer}
             >
               <option hidden={$vizMethod} disabled selected value={null}>select one</option>
-              <option value="SUM">Sum</option>
-              <option value="MEAN">Mean</option>
-              <option value="MIN">Min</option>
-              <option value="MAX">Max</option>
+              <option value="Sum">Sum</option>
+              <option value="Mean">Mean</option>
+              <option value="Min">Min</option>
+              <option value="Max">Max</option>
             </select>
           </div>
         </div>
@@ -144,6 +145,12 @@
             />
           </div>
         {/if}
+      </fieldset>
+    {/if}
+    {#if $vizVisable}
+      <fieldset>
+        <legend>Hover</legend>
+        {$vizMethod ?? 'Count'}: {$vizHoverValue ?? ''}
       </fieldset>
     {/if}
   </form>
