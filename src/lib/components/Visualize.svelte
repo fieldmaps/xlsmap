@@ -6,10 +6,12 @@
     choices,
     survey,
     vizChoice,
+    vizChoiceLabel,
     vizDateField,
     vizDateFrom,
     vizDateTo,
     vizField,
+    vizFieldLabel,
     vizHover,
     vizMethod,
     vizType,
@@ -31,10 +33,16 @@
 
   const onChangeField = (e: Event) => {
     const [type, name] = e.target.value.split('|');
-    $vizType = type;
-    $vizField = name;
     $vizChoice = null;
+    $vizField = name;
+    $vizFieldLabel = e.target.selectedOptions[0].label;
     $vizMethod = null;
+    $vizType = type;
+    addDataLayer();
+  };
+
+  const onChangeChoice = (e: Event) => {
+    $vizChoiceLabel = e.target.selectedOptions[0].label;
     addDataLayer();
   };
 </script>
@@ -71,7 +79,7 @@
               bind:value={$vizChoice}
               class:placeholder={!$vizChoice}
               id="select-field"
-              on:change={addDataLayer}
+              on:change={onChangeChoice}
             >
               <option hidden={$vizChoice} disabled selected value={null}>select one</option>
               {#each $choices.filter(({ list_name }) => list_name === $vizType.split(' ')[1]) as choice}

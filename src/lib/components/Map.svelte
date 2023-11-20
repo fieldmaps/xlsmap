@@ -1,7 +1,17 @@
 <script lang="ts">
   import { PUBLIC_API } from '$env/static/public';
   import { fetchAreas } from '$lib/data/fetch';
-  import { map, vizMax, vizVisable } from '$lib/stores';
+  import {
+    map,
+    vizChoice,
+    vizChoiceLabel,
+    vizDateFrom,
+    vizDateTo,
+    vizFieldLabel,
+    vizMax,
+    vizMethod,
+    vizVisable,
+  } from '$lib/stores';
   import { format } from 'd3-format';
   import { Map, NavigationControl, ScaleControl, type LngLatBoundsLike } from 'maplibre-gl';
   import 'maplibre-gl/dist/maplibre-gl.css';
@@ -35,10 +45,29 @@
       <div id="map-legend">
         <fieldset>
           <legend>Legend</legend>
-          <div class="legend-color"></div>
-          <div class="legend-column">
-            <div>0</div>
-            <div>{$vizMax % 1 ? format('.1f')($vizMax) : $vizMax}</div>
+          <div>
+            <div>{$vizFieldLabel}:</div>
+            <div>{$vizChoice ? $vizChoiceLabel : $vizMethod}</div>
+          </div>
+          <div>
+            {#if $vizDateFrom}
+              <div class="row-group">
+                <div>From:</div>
+                <div>{new Date($vizDateFrom).toLocaleDateString()}</div>
+              </div>
+            {/if}
+            {#if $vizDateTo}
+              <div class="row-group">
+                <div>To:</div>
+                <div>{new Date($vizDateTo).toLocaleDateString()}</div>
+              </div>{/if}
+          </div>
+          <div class="flex">
+            <div class="legend-color"></div>
+            <div class="legend-column">
+              <div>0</div>
+              <div>{$vizMax % 1 ? format('.1f')($vizMax) : $vizMax}</div>
+            </div>
           </div>
         </fieldset>
       </div>
@@ -53,6 +82,11 @@
     height: 100%;
   }
   fieldset {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .flex {
     display: flex;
     gap: 0.5rem;
   }
@@ -77,5 +111,10 @@
     background: linear-gradient(to bottom, #fcfbfd 0%, #3f007d 100%);
     height: 5rem;
     width: 1rem;
+  }
+  .row-group {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: space-between;
   }
 </style>
