@@ -7,6 +7,7 @@ import {
   map,
   survey,
   vizChoice,
+  vizDataType,
   vizDateField,
   vizDateFrom,
   vizDateTo,
@@ -14,6 +15,7 @@ import {
   vizHover,
   vizMax,
   vizMethod,
+  vizNumerical,
   vizVisable,
 } from '$lib/stores';
 import { max, mean, min, rollup, sum } from 'd3-array';
@@ -31,7 +33,7 @@ const aggGroup = (d) => {
   return $areaProperties.map((prop) => d[prop]).join('|');
 };
 
-const getData = () => {
+const getDateFilteredData = () => {
   const $data = get(data);
   const $vizDateFrom = get(vizDateFrom);
   const $vizDateTo = get(vizDateTo);
@@ -57,52 +59,64 @@ export const setProperties = ($areaGeoJSON) => {
   areaGeoJSON.set($areaGeoJSON);
 };
 
-export const addDataLayer = () => {
+const aggregate = (filteredData) => {
+  const $vizDataType = get(vizDataType);
   const $vizField = get(vizField);
-  const $vizMethod = get(vizMethod);
   const $vizChoice = get(vizChoice);
-  const filteredData = getData();
-  if ($vizField) {
-    if ((!$vizMethod && !$vizChoice) || !filteredData.length) {
-      removeDataLayer();
-      return;
-    }
-    const $areaGeoJSON = get(areaGeoJSON);
-    const $map = get(map);
-    const aggFunc = $vizChoice
-      ? (v) => sum(v, (d) => (d[$vizField] === $vizChoice ? 1 : 0))
-      : (v) => methods[$vizMethod](v, (d) => d[$vizField]);
-    const dataAgg = rollup(filteredData, aggFunc, aggGroup);
-    const max = Math.max(...dataAgg.values(), 1e-99);
-    vizMax.set(max);
-    const features = $areaGeoJSON.features.map((feature) => ({
-      ...feature,
-      properties: { ...feature.properties, dataVizValue: dataAgg.get(feature.id) ?? 0 },
-    }));
-    removeDataLayer();
-    vizVisable.set(true);
-    $map.getSource('areas')?.setData({ type: 'FeatureCollection', features });
-    $map.addLayer(
-      {
-        id: 'areas-fill',
-        source: 'areas',
-        type: 'fill',
-        paint: {
-          'fill-color': [
-            'interpolate',
-            ['linear'],
-            ['get', 'dataVizValue'],
-            0,
-            '#fcfbfd',
-            max,
-            '#3f007d',
-          ],
-        },
-      },
-      'areas-outline',
+  const $vizMethod = get(vizMethod);
+  const $vizNumerical = get(vizNumerical);
+  if ($vizDataType === 'CATEGORICAL') {
+    const aggFunc = (v) => sum(v, (d) => ($vizChoice.includes(d[$vizField]) ? 1 : 0));
+    return rollup(filteredData, aggFunc, aggGroup);
+  } else {
+    const longData = filteredData.flatMap((d) =>
+      $vizNumerical.map((n) => ({ ...d, dataVizValue: d[n] })),
     );
-    addHoverEvents();
+    const aggFunc = (v) => methods[$vizMethod](v, (d) => d.dataVizValue);
+    return rollup(longData, aggFunc, aggGroup);
   }
+};
+
+export const addDataLayer = () => {
+  const $vizChoice = get(vizChoice);
+  const $vizNumerical = get(vizNumerical);
+  const filteredData = getDateFilteredData();
+  if ((!$vizNumerical.length && !$vizChoice.length) || !filteredData.length) {
+    removeDataLayer();
+    return;
+  }
+  const $areaGeoJSON = get(areaGeoJSON);
+  const $map = get(map);
+  const dataAgg = aggregate(filteredData);
+  const max = Math.max(...dataAgg.values(), 1e-99);
+  vizMax.set(max);
+  const features = $areaGeoJSON.features.map((feature) => ({
+    ...feature,
+    properties: { ...feature.properties, dataVizValue: dataAgg.get(feature.id) ?? 0 },
+  }));
+  removeDataLayer();
+  vizVisable.set(true);
+  $map.getSource('areas')?.setData({ type: 'FeatureCollection', features });
+  $map.addLayer(
+    {
+      id: 'areas-fill',
+      source: 'areas',
+      type: 'fill',
+      paint: {
+        'fill-color': [
+          'interpolate',
+          ['linear'],
+          ['get', 'dataVizValue'],
+          0,
+          '#fcfbfd',
+          max,
+          '#3f007d',
+        ],
+      },
+    },
+    'areas-outline',
+  );
+  addHoverEvents();
 };
 
 export const removeDataLayer = () => {

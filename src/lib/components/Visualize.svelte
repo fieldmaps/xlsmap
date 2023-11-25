@@ -1,4 +1,5 @@
 <script lang="ts">
+  import Chart from '$lib/components/Chart.svelte';
   import { downloadScreenshot } from '$lib/data/download';
   import { addDataLayer } from '$lib/map/data';
   import {
@@ -7,6 +8,7 @@
     survey,
     vizChoice,
     vizChoiceLabel,
+    vizDataType,
     vizDateField,
     vizDateFrom,
     vizDateTo,
@@ -14,13 +16,18 @@
     vizFieldLabel,
     vizHover,
     vizMethod,
+    vizNumerical,
+    vizNumericalLabel,
     vizType,
     vizVisable,
   } from '$lib/stores';
   import { format } from 'd3-format';
 
-  const isVizField = ({ type }: { type: string }) =>
-    ['integer', 'select_one'].includes(type.split(' ')[0]);
+  const CATEGORICAL = 'CATEGORICAL';
+  const NUMERICAL = 'NUMERICAL';
+
+  const isCategorical = ({ type }: { type: string }) => type.split(' ')[0] === 'select_one';
+  const isNumerical = ({ type }: { type: string }) => type === 'integer';
 
   const isVizDateField = ({ type }: { type: string }) => type === 'date';
 
@@ -31,18 +38,40 @@
     addDataLayer();
   };
 
-  const onChangeField = (e: Event) => {
+  const onChangeDataType = () => {
+    $vizField = '';
+    $vizType = '';
+    $vizFieldLabel = '';
+    $vizChoice = [];
+    $vizChoiceLabel = [];
+    $vizNumerical = [];
+    $vizNumericalLabel = [];
+    $vizMethod = null;
+    addDataLayer();
+  };
+
+  const onChangeCategorical = (e: Event) => {
     const [type, name] = e.target.value.split('|');
-    $vizChoice = null;
     $vizField = name;
     $vizFieldLabel = e.target.selectedOptions[0].label;
-    $vizMethod = null;
     $vizType = type;
+    $vizChoice = [];
+    addDataLayer();
+  };
+
+  const onChangeNumerical = (e: Event) => {
+    const label = e.target.labels[0].textContent;
+    $vizNumericalLabel = e.target.checked
+      ? [...$vizNumericalLabel, label]
+      : $vizNumericalLabel.filter((x) => x !== label);
     addDataLayer();
   };
 
   const onChangeChoice = (e: Event) => {
-    $vizChoiceLabel = e.target.selectedOptions[0].label;
+    const label = e.target.labels[0].textContent;
+    $vizChoiceLabel = e.target.checked
+      ? [...$vizChoiceLabel, label]
+      : $vizChoiceLabel.filter((x) => x !== label);
     addDataLayer();
   };
 </script>
@@ -54,127 +83,169 @@
   <hr />
   <form>
     <fieldset>
-      <legend>Display</legend>
-      <div class="date-group">
-        <label for="select-field">Field</label>
-        <div class="select-group">
-          <select
-            class:placeholder={!$vizField}
-            id="select-field"
-            on:change={onChangeField}
-            value="{$vizType}|{$vizField}"
-          >
-            <option hidden={$vizField !== ''} disabled selected value="|">select one</option>
-            {#each $survey.filter(isVizField) as field}
-              <option value="{field.type}|{field.name}">{field.label}</option>
-            {/each}
-          </select>
-        </div>
+      <legend>Data Type</legend>
+      <div class="radio-group">
+        <label>
+          <input
+            bind:group={$vizDataType}
+            type="radio"
+            value={CATEGORICAL}
+            on:change={onChangeDataType}
+          />
+          Categorical
+        </label>
+        <label>
+          <input
+            bind:group={$vizDataType}
+            type="radio"
+            value={NUMERICAL}
+            on:change={onChangeDataType}
+          />
+          Numerical
+        </label>
       </div>
-      {#if $vizType.split(' ')[0] === 'select_one'}
-        <div class="date-group">
-          <label for="select-field">Category</label>
-          <div class="select-group">
-            <select
-              bind:value={$vizChoice}
-              class:placeholder={!$vizChoice}
-              id="select-field"
-              on:change={onChangeChoice}
-            >
-              <option hidden={$vizChoice} disabled selected value={null}>select one</option>
-              {#each $choices.filter(({ list_name }) => list_name === $vizType.split(' ')[1]) as choice}
-                <option value={choice.name}>{choice.label}</option>
-              {/each}
-            </select>
-          </div>
-        </div>
-      {/if}
-      {#if $vizType === 'integer'}
-        <div class="date-group">
-          <label for="select-field">Aggregation</label>
-          <div class="select-group">
-            <select
-              bind:value={$vizMethod}
-              class:placeholder={!$vizMethod}
-              id="select-field"
-              on:change={addDataLayer}
-            >
-              <option hidden={$vizMethod} disabled selected value={null}>select one</option>
-              <option value="Sum">Sum</option>
-              <option value="Mean">Mean</option>
-              <option value="Min">Min</option>
-              <option value="Max">Max</option>
-            </select>
-          </div>
-        </div>
-      {/if}
     </fieldset>
-    {#if $survey.filter(isVizDateField).length}
+    {#if $vizDataType}
       <fieldset>
-        <legend>Filter</legend>
+        <legend>Display</legend>
         <div class="date-group">
-          <label for="select-field">Date</label>
-          <div class="select-group">
-            <select
-              bind:value={$vizDateField}
-              class:placeholder={!$vizDateField}
-              id="select-field"
-              on:change={addDataLayer}
-            >
-              <option hidden={$vizDateField} disabled selected value={null}> select one </option>
-              {#each $survey.filter(isVizDateField) as field}
-                <option value={field.name}>{field.label}</option>
-              {/each}
-            </select>
-            {#if $vizDateField}
-              <button type="button" class="reset" on:click={resetDate}>✕</button>
+          {#if $vizDataType === CATEGORICAL}
+            <label for="select-field">Field</label>
+            <div class="select-group">
+              <select
+                class:placeholder={!$vizField}
+                id="select-field"
+                on:change={onChangeCategorical}
+                value="{$vizType}|{$vizField}"
+              >
+                <option hidden={$vizField !== ''} disabled selected value="|">select one</option>
+                {#each $survey.filter(isCategorical) as field}
+                  <option value="{field.type}|{field.name}">{field.label}</option>
+                {/each}
+              </select>
+            </div>
+            {#if $vizField}
+              <div class="date-group">
+                <div>Category</div>
+                {#each $choices.filter(({ list_name }) => list_name === $vizType.split(' ')[1]) as choice}
+                  <label>
+                    <input
+                      bind:group={$vizChoice}
+                      on:change={onChangeChoice}
+                      type="checkbox"
+                      value={choice.name}
+                    />
+                    {choice.label}
+                  </label>
+                {/each}
+              </div>
             {/if}
-          </div>
-        </div>
-        {#if $vizDateField}
-          <div class="date-group">
-            <label for="date-filter">From</label>
-            <input
-              bind:value={$vizDateFrom}
-              class:placeholder={!$vizDateFrom}
-              class="select-group"
-              max={$vizDateTo}
-              on:change={addDataLayer}
-              type="date"
-            />
-          </div>
-          <div class="date-group">
-            <label for="date-filter">To</label>
-            <input
-              on:change={addDataLayer}
-              bind:value={$vizDateTo}
-              class:placeholder={!$vizDateTo}
-              class="select-group"
-              min={$vizDateFrom}
-              type="date"
-            />
-          </div>
-        {/if}
-      </fieldset>
-    {/if}
-    {#if $vizVisable}
-      <fieldset>
-        <legend>Hover</legend>
-        <div class="row-group">
-          <div>Area:</div>
-          <div>{$vizHover[$areaProperties[0]] ?? ''}</div>
-        </div>
-        <div class="row-group">
-          <div>{$vizMethod ?? 'Count'}:</div>
-          <div>
-            {$vizHover.dataVizValue % 1
-              ? format('.1f')($vizHover.dataVizValue)
-              : $vizHover.dataVizValue ?? ''}
-          </div>
+          {/if}
+          {#if $vizDataType === NUMERICAL}
+            <label for="select-field">Aggregation</label>
+            <div class="select-group">
+              <select
+                bind:value={$vizMethod}
+                class:placeholder={!$vizMethod}
+                id="select-field"
+                on:change={addDataLayer}
+              >
+                <option hidden={$vizMethod} disabled selected value={null}>select one</option>
+                <option value="Sum">Sum</option>
+                <option value="Mean">Mean</option>
+                <option value="Min">Min</option>
+                <option value="Max">Max</option>
+              </select>
+            </div>
+            {#if $vizMethod}
+              <div class="date-group">
+                <div>Fields</div>
+                {#each $survey.filter(isNumerical) as field}
+                  <label>
+                    <input
+                      bind:group={$vizNumerical}
+                      on:change={onChangeNumerical}
+                      type="checkbox"
+                      value={field.name}
+                    />
+                    {field.label}
+                  </label>
+                {/each}
+              </div>
+            {/if}
+          {/if}
         </div>
       </fieldset>
+      {#if $survey.filter(isVizDateField).length}
+        <fieldset>
+          <legend>Filter</legend>
+          <div class="date-group">
+            <label for="select-field">Date</label>
+            <div class="select-group">
+              <select
+                bind:value={$vizDateField}
+                class:placeholder={!$vizDateField}
+                id="select-field"
+                on:change={addDataLayer}
+              >
+                <option hidden={$vizDateField} disabled selected value={null}> select one </option>
+                {#each $survey.filter(isVizDateField) as field}
+                  <option value={field.name}>{field.label}</option>
+                {/each}
+              </select>
+              {#if $vizDateField}
+                <button type="button" class="reset" on:click={resetDate}>✕</button>
+              {/if}
+            </div>
+          </div>
+          {#if $vizDateField}
+            <div class="date-group">
+              <label for="date-filter">From</label>
+              <input
+                bind:value={$vizDateFrom}
+                class:placeholder={!$vizDateFrom}
+                class="select-group"
+                max={$vizDateTo}
+                on:change={addDataLayer}
+                type="date"
+              />
+            </div>
+            <div class="date-group">
+              <label for="date-filter">To</label>
+              <input
+                on:change={addDataLayer}
+                bind:value={$vizDateTo}
+                class:placeholder={!$vizDateTo}
+                class="select-group"
+                min={$vizDateFrom}
+                type="date"
+              />
+            </div>
+          {/if}
+        </fieldset>
+      {/if}
+      {#if $vizVisable}
+        <fieldset>
+          <legend>Hover</legend>
+          <div class="row-group">
+            <div>Area:</div>
+            <div>{$vizHover[$areaProperties[0]] ?? ''}</div>
+          </div>
+          <div class="row-group">
+            <div>{$vizMethod ?? 'Count'}:</div>
+            <div>
+              {$vizHover.dataVizValue % 1
+                ? format('.1f')($vizHover.dataVizValue)
+                : $vizHover.dataVizValue ?? ''}
+            </div>
+          </div>
+        </fieldset>
+      {/if}
     {/if}
   </form>
+  {#if $vizVisable}
+    <Chart />
+  {/if}
 </section>
 
 <style>
@@ -247,6 +318,10 @@
   .row-group {
     display: flex;
     justify-content: space-between;
+  }
+  .radio-group {
+    display: flex;
+    justify-content: space-around;
   }
   .select-group {
     display: flex;

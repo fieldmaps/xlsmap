@@ -10,6 +10,7 @@
     vizFieldLabel,
     vizMax,
     vizMethod,
+    vizNumericalLabel,
     vizVisable,
   } from '$lib/stores';
   import { format } from 'd3-format';
@@ -46,21 +47,18 @@
         <fieldset>
           <legend>Legend</legend>
           <div>
-            <div>{$vizFieldLabel}:</div>
-            <div>{$vizChoice ? $vizChoiceLabel : $vizMethod}</div>
+            <div>{$vizChoice.length ? $vizFieldLabel : $vizMethod}:</div>
+            {#each $vizChoice.length ? $vizChoiceLabel : $vizNumericalLabel as option}
+              <div>{option}</div>
+            {/each}
           </div>
           <div>
             {#if $vizDateFrom}
-              <div class="row-group">
-                <div>From:</div>
-                <div>{new Date($vizDateFrom).toLocaleDateString()}</div>
-              </div>
+              <div>From: {new Date($vizDateFrom).toLocaleDateString()}</div>
             {/if}
             {#if $vizDateTo}
-              <div class="row-group">
-                <div>To:</div>
-                <div>{new Date($vizDateTo).toLocaleDateString()}</div>
-              </div>{/if}
+              <div>To: {new Date($vizDateTo).toLocaleDateString()}</div>
+            {/if}
           </div>
           <div class="flex">
             <div class="legend-color"></div>
