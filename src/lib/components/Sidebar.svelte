@@ -62,6 +62,7 @@
   }
   @media only screen and (min-width: 769px) {
     nav {
+      min-width: 25rem;
       width: 25rem;
     }
   }

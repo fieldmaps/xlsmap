@@ -1,17 +1,20 @@
 <script lang="ts">
-  import Chart from '$lib/components/Chart.svelte';
-  import { downloadScreenshot } from '$lib/data/download';
+  import Filters from '$lib/components/visualize/Filters.svelte';
+  import { downloadChart, downloadMap } from '$lib/data/download';
   import { addDataLayer } from '$lib/map/data';
   import {
     areaProperties,
     choices,
     survey,
+    vizChartType,
     vizChoice,
     vizChoiceLabel,
     vizDataType,
     vizDateField,
     vizDateFrom,
+    vizDateGroup,
     vizDateTo,
+    vizDisplayType,
     vizField,
     vizFieldLabel,
     vizHover,
@@ -25,6 +28,9 @@
 
   const CATEGORICAL = 'CATEGORICAL';
   const NUMERICAL = 'NUMERICAL';
+
+  const MAP = 'MAP';
+  const CHART = 'CHART';
 
   const isCategorical = ({ type }: { type: string }) => type.split(' ')[0] === 'select_one';
   const isNumerical = ({ type }: { type: string }) => type === 'integer';
@@ -56,6 +62,7 @@
     $vizFieldLabel = e.target.selectedOptions[0].label;
     $vizType = type;
     $vizChoice = [];
+    $vizChoiceLabel = [];
     addDataLayer();
   };
 
@@ -77,11 +84,31 @@
 </script>
 
 <section>
-  <button on:click={downloadScreenshot} class:info={$vizVisable} disabled={!$vizVisable}>
-    ↓ map.png
-  </button>
+  {#if $vizDisplayType === MAP}
+    <button on:click={downloadMap} class:info={$vizVisable} disabled={!$vizVisable}>
+      ↓ map.png
+    </button>
+  {/if}
+  {#if $vizDisplayType === CHART}
+    <button on:click={downloadChart} class:info={$vizVisable} disabled={!$vizVisable}>
+      ↓ chart.png
+    </button>
+  {/if}
   <hr />
   <form>
+    <fieldset>
+      <legend>Display Type</legend>
+      <div class="radio-group">
+        <label>
+          <input bind:group={$vizDisplayType} type="radio" value={MAP} on:change={addDataLayer} />
+          Map
+        </label>
+        <label>
+          <input bind:group={$vizDisplayType} type="radio" value={CHART} on:change={addDataLayer} />
+          Chart
+        </label>
+      </div>
+    </fieldset>
     <fieldset>
       <legend>Data Type</legend>
       <div class="radio-group">
@@ -107,7 +134,7 @@
     </fieldset>
     {#if $vizDataType}
       <fieldset>
-        <legend>Display</legend>
+        <legend>Data</legend>
         <div class="date-group">
           {#if $vizDataType === CATEGORICAL}
             <label for="select-field">Field</label>
@@ -126,7 +153,6 @@
             </div>
             {#if $vizField}
               <div class="date-group">
-                <div>Category</div>
                 {#each $choices.filter(({ list_name }) => list_name === $vizType.split(' ')[1]) as choice}
                   <label>
                     <input
@@ -159,7 +185,6 @@
             </div>
             {#if $vizMethod}
               <div class="date-group">
-                <div>Fields</div>
                 {#each $survey.filter(isNumerical) as field}
                   <label>
                     <input
@@ -178,9 +203,9 @@
       </fieldset>
       {#if $survey.filter(isVizDateField).length}
         <fieldset>
-          <legend>Filter</legend>
+          <legend>Date</legend>
           <div class="date-group">
-            <label for="select-field">Date</label>
+            <label for="select-field">Field</label>
             <div class="select-group">
               <select
                 bind:value={$vizDateField}
@@ -224,7 +249,7 @@
           {/if}
         </fieldset>
       {/if}
-      {#if $vizVisable}
+      {#if $vizVisable && $vizDisplayType === MAP}
         <fieldset>
           <legend>Hover</legend>
           <div class="row-group">
@@ -241,11 +266,68 @@
           </div>
         </fieldset>
       {/if}
+      {#if $vizVisable && $vizDisplayType === CHART}
+        <fieldset>
+          <legend>Chart Type</legend>
+          <div class="radio-group">
+            <label>
+              <input
+                bind:group={$vizChartType}
+                type="radio"
+                value="STACKED"
+                on:change={addDataLayer}
+              />
+              Stacked
+            </label>
+            <label>
+              <input
+                bind:group={$vizChartType}
+                type="radio"
+                value="GROUPED"
+                on:change={addDataLayer}
+              />
+              Grouped
+            </label>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Date Grouping</legend>
+          <div class="radio-group">
+            <label>
+              <input
+                bind:group={$vizDateGroup}
+                type="radio"
+                value="yearweek"
+                on:change={addDataLayer}
+              />
+              Weekly
+            </label>
+            <label>
+              <input
+                bind:group={$vizDateGroup}
+                type="radio"
+                value="yearmonth"
+                on:change={addDataLayer}
+              />
+              Monthly
+            </label>
+            <label>
+              <input
+                bind:group={$vizDateGroup}
+                type="radio"
+                value="yearquarter"
+                on:change={addDataLayer}
+              />
+              Quarterly
+            </label>
+          </div>
+        </fieldset>
+      {/if}
+    {/if}
+    {#if $vizVisable}
+      <Filters />
     {/if}
   </form>
-  {#if $vizVisable}
-    <Chart />
-  {/if}
 </section>
 
 <style>
@@ -276,6 +358,11 @@
     border-color: var(--background-color-2);
     margin: 0.5rem 0;
   }
+  form {
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+  }
   hr {
     width: 100%;
   }
@@ -283,6 +370,7 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    overflow: hidden;
   }
   input,
   select {

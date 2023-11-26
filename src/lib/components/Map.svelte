@@ -7,6 +7,7 @@
     vizChoiceLabel,
     vizDateFrom,
     vizDateTo,
+    vizDisplayType,
     vizFieldLabel,
     vizMax,
     vizMethod,
@@ -40,9 +41,9 @@
 </script>
 
 <div class="container">
-  <div class="map" bind:this={container} />
+  <div class="map" bind:this={container} class:hidden={$vizDisplayType !== 'MAP'} />
   {#if $vizVisable}
-    <div class="legend">
+    <div class="legend" class:hidden={$vizDisplayType !== 'MAP'}>
       <div id="map-legend">
         <fieldset>
           <legend>Legend</legend>
@@ -71,6 +72,9 @@
       </div>
     </div>
   {/if}
+  <div class="map" class:hidden={$vizDisplayType !== 'CHART'}>
+    <div id="viz" />
+  </div>
 </div>
 
 <style>
@@ -78,6 +82,11 @@
   .container {
     flex-grow: 1;
     height: 100%;
+    overflow: auto;
+  }
+  #viz {
+    height: 99%;
+    width: 100%;
   }
   fieldset {
     display: flex;
@@ -110,9 +119,7 @@
     height: 5rem;
     width: 1rem;
   }
-  .row-group {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: space-between;
+  .hidden {
+    display: none;
   }
 </style>

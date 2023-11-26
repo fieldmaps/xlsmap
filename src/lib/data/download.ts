@@ -26,7 +26,7 @@ export const downloadData = async () => {
   a.click();
 };
 
-export const downloadScreenshot = async () => {
+export const downloadMap = async () => {
   const $map = get(map);
   const mapCanvas = $map.getCanvas();
   const mapPng = mapCanvas.toDataURL();
@@ -38,5 +38,12 @@ export const downloadScreenshot = async () => {
     { src: legendPng, x: 10, y: mapCanvas.height - height - 10 },
   ]);
   a.download = `map_${getDate()}.png`;
+  a.click();
+};
+
+export const downloadChart = async () => {
+  const a = document.createElement('a');
+  a.href = document.getElementById('viz').children[0].toDataURL();
+  a.download = `chart_${getDate()}.png`;
   a.click();
 };
