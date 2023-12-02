@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PUBLIC_API } from '$env/static/public';
+  import { PUBLIC_MAP } from '$env/static/public';
   import { fetchAreas } from '$lib/data/fetch';
   import {
     map,
@@ -17,6 +17,7 @@
   import { format } from 'd3-format';
   import { Map, NavigationControl, ScaleControl, type LngLatBoundsLike } from 'maplibre-gl';
   import 'maplibre-gl/dist/maplibre-gl.css';
+  import { isMapboxURL, transformMapboxUrl } from 'maplibregl-mapbox-request-transformer';
   import { onMount } from 'svelte';
 
   export let root: boolean;
@@ -26,13 +27,21 @@
     [180, 90],
   ];
 
+  const transformRequest = (url: string, resourceType: string) => {
+    if (isMapboxURL(url)) {
+      return transformMapboxUrl(url, resourceType, new URL(PUBLIC_MAP).searchParams.get('key'));
+    }
+    return { url };
+  };
+
   onMount(() => {
     $map = new Map({
       attributionControl: false,
       container,
       bounds,
       preserveDrawingBuffer: true,
-      style: `https://api.maptiler.com/maps/dataviz/style.json?key=${PUBLIC_API}`,
+      style: PUBLIC_MAP,
+      transformRequest,
     });
     $map.addControl(new ScaleControl({}), 'bottom-right');
     $map.addControl(new NavigationControl({ showCompass: false }), 'bottom-right');
