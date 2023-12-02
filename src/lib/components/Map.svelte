@@ -83,7 +83,9 @@
     </div>
   {/if}
   <div class="map" class:hidden={$vizDisplayType !== CHART}>
-    <div id="viz" />
+    {#if $vizVisable}
+      <div id="viz" />
+    {/if}
   </div>
 </div>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { CATEGORICAL, CHART, MAP, NUMERICAL } from '$lib/consts';
-  import { addDataLayer } from '$lib/map/data';
+  import { addDataLayer, removeDataLayer } from '$lib/map/data';
   import {
     vizChoice,
     vizChoiceLabel,
@@ -23,7 +23,7 @@
     $vizNumerical = [];
     $vizNumericalLabel = [];
     $vizMethod = null;
-    addDataLayer();
+    removeDataLayer();
   };
 </script>
 
