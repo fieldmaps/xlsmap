@@ -29,9 +29,8 @@
   ];
 
   const transformRequest = (url: string, resourceType: string) => {
-    if (isMapboxURL(url)) {
-      return transformMapboxUrl(url, resourceType, new URL(PUBLIC_MAP).searchParams.get('key'));
-    }
+    const apiKey = new URL(PUBLIC_MAP).searchParams.get('key');
+    if (isMapboxURL(url)) return transformMapboxUrl(url, resourceType, apiKey);
     return { url };
   };
 
@@ -113,10 +112,11 @@
     position: relative;
   }
   .legend {
+    background-color: white;
     bottom: 0.5rem;
+    box-shadow: 0 0 0.3rem white;
     left: 0.5rem;
     position: absolute;
-    text-shadow: 0 0 0.3rem white;
   }
   .legend-column {
     display: flex;
