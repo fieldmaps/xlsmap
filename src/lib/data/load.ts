@@ -7,9 +7,12 @@ import {
   data,
   formValid,
   survey,
+  vizDateField,
 } from '$lib/stores';
 import Excel from 'exceljs';
 import { get } from 'svelte/store';
+
+const isDateField = ({ type }: { type: string }) => type === 'date';
 
 export const loadData = async (e: Event) => {
   activeIndex.set(-1);
@@ -21,12 +24,18 @@ export const loadData = async (e: Event) => {
   data.set(rows);
 };
 
+const setDefaultDateField = () => {
+  const dateFields = get(survey).filter(isDateField);
+  if (dateFields.length) vizDateField.set(dateFields[0].name);
+};
+
 export const loadForm = async (file: ArrayBuffer) => {
   const workbook = new Excel.Workbook();
   await workbook.xlsx.load(file);
   if (get(areaProperties).length && !get(survey).length) formValid.set(true);
   survey.set(await excelToJSON(workbook, 'survey'));
   choices.set(await excelToJSON(workbook, 'choices'));
+  setDefaultDateField();
 };
 
 export const loadGeoJSON = ($areaGeoJSON) => {

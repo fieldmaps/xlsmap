@@ -1,5 +1,6 @@
 <script lang="ts">
   import { PUBLIC_MAP } from '$env/static/public';
+  import { CHART, MAP } from '$lib/consts';
   import { fetchAreas } from '$lib/data/fetch';
   import {
     map,
@@ -50,9 +51,9 @@
 </script>
 
 <div class="container">
-  <div class="map" bind:this={container} class:hidden={$vizDisplayType !== 'MAP'} />
+  <div class="map" bind:this={container} class:hidden={$vizDisplayType !== MAP} />
   {#if $vizVisable}
-    <div class="legend" class:hidden={$vizDisplayType !== 'MAP'}>
+    <div class="legend" class:hidden={$vizDisplayType !== MAP}>
       <div id="map-legend">
         <fieldset>
           <legend>Legend</legend>
@@ -81,7 +82,7 @@
       </div>
     </div>
   {/if}
-  <div class="map" class:hidden={$vizDisplayType !== 'CHART'}>
+  <div class="map" class:hidden={$vizDisplayType !== CHART}>
     <div id="viz" />
   </div>
 </div>

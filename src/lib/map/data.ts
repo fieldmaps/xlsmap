@@ -1,3 +1,4 @@
+import { CATEGORICAL, CHART, MAP } from '$lib/consts';
 import { addChart } from '$lib/data/chart';
 import { addHoverEvents, removeHoverEvents } from '$lib/map/events';
 import {
@@ -55,7 +56,7 @@ const getDateFilteredData = () => {
     const area = $vizFilterArea[1].length
       ? $vizFilterArea[1].includes(row[$vizFilterArea[0]])
       : true;
-    const category = $vizDataType === 'CATEGORICAL' ? $vizChoice.includes(row[$vizField]) : true;
+    const category = $vizDataType === CATEGORICAL ? $vizChoice.includes(row[$vizField]) : true;
     const filter = validFilters.length
       ? !validFilters
           .map(([key, values]) => !values.length || values.includes(row[key.split('|')[1]]))
@@ -82,7 +83,7 @@ const aggregate = (filteredData) => {
   const $vizDataType = get(vizDataType);
   const $vizMethod = get(vizMethod);
   const $vizNumerical = get(vizNumerical);
-  if ($vizDataType === 'CATEGORICAL') {
+  if ($vizDataType === CATEGORICAL) {
     const aggFunc = (v) => v.length;
     return rollup(filteredData, aggFunc, aggGroup);
   } else {
@@ -108,7 +109,7 @@ export const addDataLayer = () => {
     removeDataLayer();
     return;
   }
-  if ($vizDisplayType === 'MAP') {
+  if ($vizDisplayType === MAP) {
     const $areaGeoJSON = get(areaGeoJSON);
     const $map = get(map);
     const aggGroups = aggregate(filteredData);
@@ -144,7 +145,7 @@ export const addDataLayer = () => {
       'areas-outline',
     );
     addHoverEvents();
-  } else if ($vizDisplayType === 'CHART') {
+  } else if ($vizDisplayType === CHART) {
     addChart(filteredData);
     vizVisable.set(true);
   }

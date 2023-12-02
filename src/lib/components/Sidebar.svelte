@@ -3,13 +3,11 @@
   import Manage from '$lib/components/Manage.svelte';
   import Playground from '$lib/components/Playground.svelte';
   import Visualize from '$lib/components/Visualize.svelte';
+  import { MANAGE, MAP, VISUALIZE } from '$lib/consts';
   import { fetchForm } from '$lib/data/fetch';
   import { addDataLayer, removeDataLayer } from '$lib/map/data';
-  import { data, formValid } from '$lib/stores';
+  import { data, formValid, vizDisplayType } from '$lib/stores';
   import { onMount } from 'svelte';
-
-  const MANAGE = 'MANAGE';
-  const VISUALIZE = 'VISUALIZE';
 
   export let root: boolean;
   let tab = MANAGE;
@@ -17,6 +15,7 @@
 
   const onManage = () => {
     tab = MANAGE;
+    $vizDisplayType = MAP;
     removeDataLayer();
   };
 

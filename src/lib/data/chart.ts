@@ -1,3 +1,4 @@
+import { CATEGORICAL, GROUPED } from '$lib/consts';
 import {
   choices,
   survey,
@@ -53,7 +54,7 @@ const getCategoricalSpec = (data) => {
         type: 'quantitative',
         axis: { title: null },
       },
-      ...($vizChartType === 'GROUPED' && { xOffset: { field: $vizField } }),
+      ...($vizChartType === GROUPED && { xOffset: { field: $vizField } }),
       color: {
         field: $vizField,
         scale: { scheme: $vizChoice.length > 10 ? 'tableau20' : 'tableau10' },
@@ -95,7 +96,7 @@ const getNumericalSpec = (data) => {
         type: 'quantitative',
         axis: { title: null },
       },
-      ...($vizChartType === 'GROUPED' && { xOffset: { field: 'key' } }),
+      ...($vizChartType === GROUPED && { xOffset: { field: 'key' } }),
       color: {
         field: 'key',
         scale: { scheme: $vizNumerical.length > 10 ? 'tableau20' : 'tableau10' },
@@ -111,7 +112,7 @@ const getNumericalSpec = (data) => {
 
 export const addChart = (data) => {
   const $vizDataType = get(vizDataType);
-  const spec = $vizDataType === 'CATEGORICAL' ? getCategoricalSpec(data) : getNumericalSpec(data);
+  const spec = $vizDataType === CATEGORICAL ? getCategoricalSpec(data) : getNumericalSpec(data);
   vegaEmbed('#viz', spec, { mode: 'vega-lite', actions: false });
   setTimeout(() => window.dispatchEvent(new Event('resize')));
 };

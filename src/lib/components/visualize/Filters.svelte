@@ -5,6 +5,9 @@
     areaProperties,
     choices,
     survey,
+    vizDateField,
+    vizDateFrom,
+    vizDateTo,
     vizFilterArea,
     vizFilters,
   } from '$lib/stores';
@@ -39,7 +42,6 @@
 <hr />
 <fieldset>
   <legend>Filter Area</legend>
-  <label for="select-area">Property</label>
   <div class="select-group">
     <select
       class:placeholder={!$vizFilterArea[0]}
@@ -67,10 +69,36 @@
     </div>
   {/if}
 </fieldset>
+{#if $vizDateField}
+  <fieldset>
+    <legend>Filter Date</legend>
+    <div class="date-group">
+      <label for="date-filter">From</label>
+      <input
+        bind:value={$vizDateFrom}
+        class:placeholder={!$vizDateFrom}
+        class="select-group"
+        max={$vizDateTo}
+        on:change={addDataLayer}
+        type="date"
+      />
+    </div>
+    <div class="date-group">
+      <label for="date-filter">To</label>
+      <input
+        on:change={addDataLayer}
+        bind:value={$vizDateTo}
+        class:placeholder={!$vizDateTo}
+        class="select-group"
+        min={$vizDateFrom}
+        type="date"
+      />
+    </div>
+  </fieldset>
+{/if}
 {#each $vizFilters as filter, index}
   <fieldset>
     <legend>Filter {index + 1}</legend>
-    <label for="select-filter">Field</label>
     <div class="select-group">
       <select
         class:placeholder={!filter[0]}
@@ -94,7 +122,6 @@
     </div>
     {#if filter[0]}
       <div class="date-group">
-        <div>Category</div>
         {#each $choices.filter(({ list_name }) => list_name === filter[0]
               .split('|')[0]
               .split(' ')[1]) as choice}
@@ -114,6 +141,12 @@
 {/each}
 
 <style>
+  @media (prefers-color-scheme: dark) {
+    input[type='date']::-webkit-inner-spin-button,
+    input[type='date']::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
+  }
   button {
     background-color: var(--background-color-1);
     border-radius: 0.5rem;
