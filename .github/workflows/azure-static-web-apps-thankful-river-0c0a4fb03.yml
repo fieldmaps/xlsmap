@@ -27,6 +27,10 @@ jobs:
           app_location: './'
           api_location: 'build/server'
           output_location: 'build/static'
+        env:
+          PUBLIC_MAP: ${{ secrets.PUBLIC_MAP }}
+          PUBLIC_DATA: ${{ secrets.PUBLIC_DATA }}
+          PUBLIC_NAME: ${{ secrets.PUBLIC_NAME }}
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
