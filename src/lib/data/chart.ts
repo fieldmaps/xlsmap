@@ -24,14 +24,14 @@ const timeFormat = {
 };
 
 const getCategoricalSpec = (data) => {
+  const $choices = get(choices);
+  const $vizChartType = get(vizChartType);
+  const $vizChoice = get(vizChoice);
+  const $vizDateField = get(vizDateField);
+  const $vizDateGroup = get(vizDateGroup);
   const $vizField = get(vizField);
   const $vizFieldLabel = get(vizFieldLabel);
   const $vizType = get(vizType);
-  const $vizDateField = get(vizDateField);
-  const $vizDateGroup = get(vizDateGroup);
-  const $vizChartType = get(vizChartType);
-  const $vizChoice = get(vizChoice);
-  const $choices = get(choices);
   const choicesLabels = $choices
     .filter(({ list_name }) => list_name === $vizType.split(' ')[1])
     .reduce((acc, cur) => ({ ...acc, [cur.name]: cur.label }), {});
@@ -70,11 +70,11 @@ const getCategoricalSpec = (data) => {
 
 const getNumericalSpec = (data) => {
   const $survey = get(survey);
-  const $vizMethod = get(vizMethod);
-  const $vizDateField = get(vizDateField);
-  const $vizNumerical = get(vizNumerical);
-  const $vizDateGroup = get(vizDateGroup);
   const $vizChartType = get(vizChartType);
+  const $vizDateField = get(vizDateField);
+  const $vizDateGroup = get(vizDateGroup);
+  const $vizMethod = get(vizMethod);
+  const $vizNumerical = get(vizNumerical);
   const surveyLabels = $survey.reduce((acc, cur) => ({ ...acc, [cur.name]: cur.label }), {});
   const spec: TopLevelSpec = {
     width: 'container',
