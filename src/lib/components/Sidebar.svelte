@@ -4,14 +4,14 @@
   import Playground from '$lib/components/Playground.svelte';
   import Visualize from '$lib/components/Visualize.svelte';
   import { MANAGE, MAP, VISUALIZE } from '$lib/consts';
-  import { fetchForm } from '$lib/data/fetch';
+  import { fetchExcel } from '$lib/data/fetch';
   import { addDataLayer, removeDataLayer } from '$lib/map/data';
   import { data, formValid, vizDisplayType } from '$lib/stores';
   import { onMount } from 'svelte';
 
   export let root: boolean;
   let tab = MANAGE;
-  if (!root) onMount(fetchForm);
+  if (!root) onMount(fetchExcel);
 
   const onManage = () => {
     tab = MANAGE;

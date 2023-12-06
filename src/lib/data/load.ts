@@ -14,14 +14,18 @@ import { get } from 'svelte/store';
 
 const isDateField = ({ type }: { type: string }) => type === 'date';
 
-export const loadData = async (e: Event) => {
+export const loadData = async (file: ArrayBuffer) => {
   activeIndex.set(-1);
   formValid.set(true);
-  const buffer = await fileToBuffer(e.target.files[0]);
   const workbook = new Excel.Workbook();
-  await workbook.xlsx.load(buffer);
+  await workbook.xlsx.load(file);
   const rows = await excelToJSON(workbook);
   data.set(rows);
+};
+
+export const loadDataFile = async (e: Event) => {
+  const buffer = await fileToBuffer(e.target.files[0]);
+  loadData(buffer);
 };
 
 const setDefaultDateField = () => {

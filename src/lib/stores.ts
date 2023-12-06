@@ -9,6 +9,7 @@ export const areaGeoJSON = writable({});
 export const areaProperties: Writable<string[]> = writable([]);
 export const choices: Writable<unknown[]> = writable([]);
 export const data = writable([]);
+export const dataOnCloud = writable(false);
 export const formValid = writable(false);
 export const map: Writable<Map> = writable();
 export const survey: Writable<unknown[]> = writable([]);

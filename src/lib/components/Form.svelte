@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { putData } from '$lib/data/fetch';
   import {
     activeIndex,
     areaActive,
     areaProperties,
     choices,
     data,
+    dataOnCloud,
     formValid,
     survey,
   } from '$lib/stores';
@@ -12,7 +14,8 @@
   export let row;
   export let index: number;
 
-  const closeDrawer = () => {
+  const closeDrawer = async () => {
+    if (dataOnCloud) await putData();
     $formValid = true;
     $activeIndex = -1;
   };
@@ -116,7 +119,7 @@
     </div>
   {/each}
   <div class="button-group">
-    <button type="submit" class="success">✓ Validate</button>
+    <button type="submit" class="success">✓ Save</button>
     <button type="button" class="warning" on:click={deleteLocation}>✕ Delete</button>
   </div>
 </form>

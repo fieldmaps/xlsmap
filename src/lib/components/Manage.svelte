@@ -1,8 +1,9 @@
 <script lang="ts">
   import Form from '$lib/components/Form.svelte';
   import { downloadData } from '$lib/data/download';
-  import { loadData } from '$lib/data/load';
-  import { activeIndex, areaProperties, data, formValid, survey } from '$lib/stores';
+  import { fetchData } from '$lib/data/fetch';
+  import { loadDataFile } from '$lib/data/load';
+  import { activeIndex, areaProperties, data, dataOnCloud, formValid, survey } from '$lib/stores';
 
   const getEmptyRow = () => {
     const row: Record<string, unknown> = {};
@@ -11,7 +12,8 @@
     return row;
   };
 
-  const addLocation = () => {
+  const addLocation = async () => {
+    if (dataOnCloud) await fetchData();
     $data = [...$data, getEmptyRow()];
     $activeIndex = $data.length - 1;
     $formValid = false;
@@ -21,7 +23,8 @@
     });
   };
 
-  const openDrawer = (index: number) => {
+  const openDrawer = async (index: number) => {
+    if (dataOnCloud) await fetchData();
     $formValid = false;
     $activeIndex = index;
   };
@@ -30,7 +33,7 @@
 <nav>
   <div class="tabs">
     <label class="button" for="upload">↑ data.xlsx</label>
-    <input on:change={loadData} type="file" name="upload" id="upload" accept=".xlsx" />
+    <input on:change={loadDataFile} type="file" name="upload" id="upload" accept=".xlsx" />
     <button disabled={!$formValid || !$data.length} class="button" on:click={downloadData}>
       ↓ data.xlsx
     </button>

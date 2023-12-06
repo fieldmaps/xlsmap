@@ -8,14 +8,6 @@ export const jsonToExcel = async (rows: Record<string, unknown>[]) => {
   const dataValues = rows.map(Object.values);
   worksheet.addRow(dataKeys);
   worksheet.addRows(dataValues);
-  // worksheet.getCell('A2').fill = {
-  //   type: 'pattern',
-  //   pattern: 'solid',
-  //   fgColor: { argb: 'FFC7CD' },
-  // };
-  // worksheet.getCell('A2').font = {
-  //   color: { argb: '9C0007' },
-  // };
   return await workbook.xlsx.writeBuffer();
 };
 
