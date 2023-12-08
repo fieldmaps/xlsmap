@@ -31,7 +31,8 @@ export const fetchData = async () => {
   if (res.ok) {
     const file = await res.arrayBuffer();
     await loadData(file);
-    dataOnCloud.set(true);
+    const opts = await fetch(`${PUBLIC_DATA}/${slug}/data.xlsx`, { method: 'OPTIONS' });
+    if (opts.ok) dataOnCloud.set(true);
   }
 };
 

@@ -22,9 +22,10 @@
 
   const onInvalid = () => ($formValid = false);
 
-  const deleteLocation = () => {
+  const deleteLocation = async () => {
     $data.splice(index, 1);
     $data = $data;
+    if ($dataOnCloud) await putData();
     $formValid = true;
     $activeIndex = -1;
   };
