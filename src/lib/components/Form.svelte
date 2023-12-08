@@ -15,7 +15,7 @@
   export let index: number;
 
   const closeDrawer = async () => {
-    if (dataOnCloud) await putData();
+    if ($dataOnCloud) await putData();
     $formValid = true;
     $activeIndex = -1;
   };

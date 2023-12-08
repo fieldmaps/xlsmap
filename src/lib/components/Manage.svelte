@@ -13,7 +13,7 @@
   };
 
   const addLocation = async () => {
-    if (dataOnCloud) await fetchData();
+    if ($dataOnCloud) await fetchData();
     $data = [...$data, getEmptyRow()];
     $activeIndex = $data.length - 1;
     $formValid = false;
@@ -24,7 +24,7 @@
   };
 
   const openDrawer = async (index: number) => {
-    if (dataOnCloud) await fetchData();
+    if ($dataOnCloud) await fetchData();
     $formValid = false;
     $activeIndex = index;
   };
