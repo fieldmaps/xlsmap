@@ -1,9 +1,9 @@
-// import { CONNECT_STR, CONTAINER } from '$env/static/private';
-// import { BlobServiceClient } from '@azure/storage-blob';
+import { CONNECT_STR, CONTAINER } from '$env/static/private';
+import { BlobServiceClient } from '@azure/storage-blob';
 import { error } from '@sveltejs/kit';
 
-// const blobServiceClient = CONNECT_STR ? BlobServiceClient.fromConnectionString(CONNECT_STR) : null;
-// const containerClient = CONTAINER ? blobServiceClient?.getContainerClient(CONTAINER) : null;
+const blobServiceClient = CONNECT_STR ? BlobServiceClient.fromConnectionString(CONNECT_STR) : null;
+const containerClient = CONTAINER ? blobServiceClient?.getContainerClient(CONTAINER) : null;
 
 export async function readFile(blobName: string) {
   //   if (containerClient) {
