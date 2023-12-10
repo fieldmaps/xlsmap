@@ -31,7 +31,7 @@ export async function fetchData() {
   if (res.ok) {
     const file = await res.arrayBuffer();
     await loadData(file);
-    const cloudOnly = await fetch(`${PUBLIC_DATA}/${slug}/data`);
+    const cloudOnly = await fetch(PUBLIC_DATA);
     if (cloudOnly.ok) dataOnCloud.set(true);
   }
 }
