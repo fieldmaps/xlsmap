@@ -4,16 +4,16 @@
   import { initMap } from '$lib/map/init';
   import { activeIndex, areaProperties, survey } from '$lib/stores';
 
-  export const importGeoJSON = async (e: Event) => {
+  export async function importGeoJSON(e: Event) {
     const geojson = await fileToJSON(e.target.files[0]);
     loadGeoJSON(geojson);
     initMap();
-  };
+  }
 
-  export const importXLSForm = async (e: Event) => {
+  export async function importXLSForm(e: Event) {
     const file = await fileToBuffer(e.target.files[0]);
     await loadForm(file);
-  };
+  }
 </script>
 
 <div class="tabs">

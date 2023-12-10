@@ -15,10 +15,15 @@
     vizType,
   } from '$lib/stores';
 
-  const isCategorical = ({ type }: { type: string }) => type.split(' ')[0] === 'select_one';
-  const isNumerical = ({ type }: { type: string }) => type === 'integer';
+  function isCategorical({ type }: { type: string }) {
+    return type.split(' ')[0] === 'select_one';
+  }
 
-  const onChangeCategorical = (e: Event) => {
+  function isNumerical({ type }: { type: string }) {
+    return type === 'integer';
+  }
+
+  function onChangeCategorical(e: Event) {
     const [type, name] = e.target.value.split('|');
     $vizField = name;
     $vizFieldLabel = e.target.selectedOptions[0].label;
@@ -26,23 +31,23 @@
     $vizChoice = [];
     $vizChoiceLabel = [];
     addDataLayer();
-  };
+  }
 
-  const onChangeNumerical = (e: Event) => {
+  function onChangeNumerical(e: Event) {
     const label = e.target.labels[0].textContent;
     $vizNumericalLabel = e.target.checked
       ? [...$vizNumericalLabel, label]
       : $vizNumericalLabel.filter((x) => x !== label);
     addDataLayer();
-  };
+  }
 
-  const onChangeChoice = (e: Event) => {
+  function onChangeChoice(e: Event) {
     const label = e.target.labels[0].textContent;
     $vizChoiceLabel = e.target.checked
       ? [...$vizChoiceLabel, label]
       : $vizChoiceLabel.filter((x) => x !== label);
     addDataLayer();
-  };
+  }
 </script>
 
 <fieldset>

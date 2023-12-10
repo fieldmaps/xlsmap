@@ -5,14 +5,14 @@
   import { loadDataFile } from '$lib/data/load';
   import { activeIndex, areaProperties, data, dataOnCloud, formValid, survey } from '$lib/stores';
 
-  const getEmptyRow = () => {
+  function getEmptyRow() {
     const row: Record<string, unknown> = {};
     for (const key of $areaProperties) row[key] = null;
     for (const s of $survey) row[s.name] = s.default;
     return row;
-  };
+  }
 
-  const addLocation = async () => {
+  async function addLocation() {
     if ($dataOnCloud) await fetchData();
     $data = [...$data, getEmptyRow()];
     $activeIndex = $data.length - 1;
@@ -21,13 +21,13 @@
       const element = document.getElementById(`location-${$activeIndex}`);
       if (element) element.scrollIntoView(true);
     });
-  };
+  }
 
-  const openDrawer = async (index: number) => {
+  async function openDrawer(index: number) {
     if ($dataOnCloud) await fetchData();
     $formValid = false;
     $activeIndex = index;
-  };
+  }
 </script>
 
 <nav>

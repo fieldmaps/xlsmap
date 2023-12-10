@@ -33,12 +33,12 @@ const methods = {
   Max: max,
 };
 
-const aggGroup = (d) => {
+function aggGroup(d) {
   const $areaProperties = get(areaProperties);
   return $areaProperties.map((prop) => d[prop]).join('|');
-};
+}
 
-const getDateFilteredData = () => {
+function getDateFilteredData() {
   const $data = get(data);
   const $vizFilters = get(vizFilters);
   const $vizFilterArea = get(vizFilterArea);
@@ -66,9 +66,9 @@ const getDateFilteredData = () => {
     const dateTo = $vizDateTo ? row[$vizDateField] <= vizDateToValue : true;
     return area && category && filter && dateFrom && dateTo;
   });
-};
+}
 
-export const setProperties = ($areaGeoJSON) => {
+export function setProperties($areaGeoJSON) {
   const $survey = get(survey);
   const $areaProperties = get(areaProperties);
   const { properties } = $areaGeoJSON.features[0];
@@ -77,9 +77,9 @@ export const setProperties = ($areaGeoJSON) => {
   for (const feature of $areaGeoJSON.features)
     feature.id = Object.values(feature.properties).join('|');
   areaGeoJSON.set($areaGeoJSON);
-};
+}
 
-const aggregate = (filteredData) => {
+function aggregate(filteredData) {
   const $vizDataType = get(vizDataType);
   const $vizMethod = get(vizMethod);
   const $vizNumerical = get(vizNumerical);
@@ -93,9 +93,9 @@ const aggregate = (filteredData) => {
     const aggFunc = (v) => methods[$vizMethod](v, (d) => d.dataVizValue);
     return rollup(aggData, aggFunc, aggGroup);
   }
-};
+}
 
-export const addDataLayer = () => {
+export function addDataLayer() {
   const $vizChoice = get(vizChoice);
   const $vizFilterArea = get(vizFilterArea);
   const $vizDisplayType = get(vizDisplayType);
@@ -149,9 +149,9 @@ export const addDataLayer = () => {
     addChart(filteredData);
     vizVisable.set(true);
   }
-};
+}
 
-export const removeDataLayer = () => {
+export function removeDataLayer() {
   removeHoverEvents();
   const $map = get(map);
   const $areaGeoJSON = get(areaGeoJSON);
@@ -159,4 +159,4 @@ export const removeDataLayer = () => {
   $map.getSource('areas')?.setData($areaGeoJSON);
   vizVisable.set(false);
   vizHover.set({});
-};
+}

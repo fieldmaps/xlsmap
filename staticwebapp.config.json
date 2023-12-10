@@ -1,8 +1,4 @@
 {
-  "platform": {
-    "apiRuntime": "python:3.10"
-  },
-  "trailingSlash": "auto",
   "routes": [
     {
       "route": "/app/*",

@@ -1,7 +1,7 @@
 import { areaGeoJSON, areaProperties, map } from '$lib/stores';
 import { get } from 'svelte/store';
 
-export const addLayers = () => {
+export function addLayers() {
   const $map = get(map);
   const $areaGeoJSON = get(areaGeoJSON);
   const $areaProperties = get(areaProperties);
@@ -38,4 +38,4 @@ export const addLayers = () => {
       'text-justify': 'auto',
     },
   });
-};
+}

@@ -14,7 +14,7 @@
     vizType,
   } from '$lib/stores';
 
-  const onChangeDataType = () => {
+  function onChangeDataType() {
     $vizField = '';
     $vizType = '';
     $vizFieldLabel = '';
@@ -24,7 +24,7 @@
     $vizNumericalLabel = [];
     $vizMethod = null;
     removeDataLayer();
-  };
+  }
 </script>
 
 <fieldset>

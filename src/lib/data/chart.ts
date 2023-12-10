@@ -23,7 +23,7 @@ const timeFormat = {
   yearquarter: '%b, %Y',
 };
 
-const getCategoricalSpec = (data) => {
+function getCategoricalSpec(data) {
   const $choices = get(choices);
   const $vizChartType = get(vizChartType);
   const $vizChoice = get(vizChoice);
@@ -66,9 +66,9 @@ const getCategoricalSpec = (data) => {
     },
   };
   return spec;
-};
+}
 
-const getNumericalSpec = (data) => {
+function getNumericalSpec(data) {
   const $survey = get(survey);
   const $vizChartType = get(vizChartType);
   const $vizDateField = get(vizDateField);
@@ -108,11 +108,11 @@ const getNumericalSpec = (data) => {
     },
   };
   return spec;
-};
+}
 
-export const addChart = (data) => {
+export function addChart(data) {
   const $vizDataType = get(vizDataType);
   const spec = $vizDataType === CATEGORICAL ? getCategoricalSpec(data) : getNumericalSpec(data);
   vegaEmbed('#viz', spec, { mode: 'vega-lite', actions: false });
   setTimeout(() => window.dispatchEvent(new Event('resize')));
-};
+}

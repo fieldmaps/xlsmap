@@ -12,30 +12,30 @@
     vizFilters,
   } from '$lib/stores';
 
-  const addFilter = () => {
+  function addFilter() {
     $vizFilters = [...$vizFilters, ['', []]];
-  };
+  }
 
-  const removeFilter = (index: number) => {
+  function removeFilter(index: number) {
     $vizFilters.splice(index, 1);
     $vizFilters = $vizFilters;
     addDataLayer();
-  };
+  }
 
-  const removeAreaFilter = () => {
+  function removeAreaFilter() {
     $vizFilterArea = ['', []];
     addDataLayer();
-  };
+  }
 
-  const onChangeFilterAreaField = (e) => {
+  function onChangeFilterAreaField(e) {
     $vizFilterArea = [e.target.value, []];
     addDataLayer();
-  };
+  }
 
-  const onChangeFilterField = (e, index) => {
+  function onChangeFilterField(e, index) {
     $vizFilters[index] = [e.target.value, []];
     addDataLayer();
-  };
+  }
 </script>
 
 <button on:click={addFilter} class="info">+ filter</button>

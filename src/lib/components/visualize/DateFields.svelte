@@ -2,7 +2,9 @@
   import { addDataLayer } from '$lib/map/data';
   import { survey, vizDateField } from '$lib/stores';
 
-  const isDateField = ({ type }: { type: string }) => type === 'date';
+  function isDateField({ type }: { type: string }) {
+    return type === 'date';
+  }
 </script>
 
 {#if $survey.filter(isDateField).length}

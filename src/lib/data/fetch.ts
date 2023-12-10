@@ -6,7 +6,7 @@ import { initMap } from '$lib/map/init';
 import { data, dataOnCloud } from '$lib/stores';
 import { get } from 'svelte/store';
 
-export const fetchAreas = async () => {
+export async function fetchAreas() {
   const $page = get(page);
   const { slug } = $page.params;
   const geojsonURL = `${PUBLIC_DATA}/${slug}/areas.geojson`;
@@ -14,29 +14,29 @@ export const fetchAreas = async () => {
   const geojson = await response.json();
   loadGeoJSON(geojson);
   initMap();
-};
+}
 
-const fetchForm = async () => {
+async function fetchForm() {
   const $page = get(page);
   const { slug } = $page.params;
   const res = await fetch(`${PUBLIC_DATA}/${slug}/form.xlsx`);
   const file = await res.arrayBuffer();
   await loadForm(file);
-};
+}
 
-export const fetchData = async () => {
+export async function fetchData() {
   const $page = get(page);
   const { slug } = $page.params;
   const res = await fetch(`${PUBLIC_DATA}/${slug}/data.xlsx`);
   if (res.ok) {
     const file = await res.arrayBuffer();
     await loadData(file);
-    const opts = await fetch(`${PUBLIC_DATA}/${slug}/data.xlsx`, { method: 'OPTIONS' });
-    if (opts.ok) dataOnCloud.set(true);
+    const cloudOnly = await fetch(`${PUBLIC_DATA}/${slug}/data`);
+    if (cloudOnly.ok) dataOnCloud.set(true);
   }
-};
+}
 
-export const putData = async () => {
+export async function putData() {
   const $page = get(page);
   const { slug } = $page.params;
   const mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
@@ -46,9 +46,9 @@ export const putData = async () => {
   formData.append('file', file);
   const options = { method: 'PUT', body: formData };
   await fetch(`${PUBLIC_DATA}/${slug}/data.xlsx`, options);
-};
+}
 
-export const fetchExcel = () => {
+export function fetchExcel() {
   fetchForm();
   fetchData();
-};
+}

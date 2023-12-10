@@ -28,11 +28,11 @@
     [180, 90],
   ];
 
-  const transformRequest = (url: string, resourceType: string) => {
+  function transformRequest(url: string, resourceType: string) {
     const apiKey = new URL(PUBLIC_MAP).searchParams.get('key');
     if (isMapboxURL(url)) return transformMapboxUrl(url, resourceType, apiKey);
     return { url };
-  };
+  }
 
   onMount(() => {
     $map = new Map({

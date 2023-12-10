@@ -14,21 +14,23 @@
   export let row;
   export let index: number;
 
-  const closeDrawer = async () => {
+  async function closeDrawer() {
     if ($dataOnCloud) await putData();
     $formValid = true;
     $activeIndex = -1;
-  };
+  }
 
-  const onInvalid = () => ($formValid = false);
+  function onInvalid() {
+    $formValid = false;
+  }
 
-  const deleteLocation = async () => {
+  async function deleteLocation() {
     $data.splice(index, 1);
     $data = $data;
     if ($dataOnCloud) await putData();
     $formValid = true;
     $activeIndex = -1;
-  };
+  }
 </script>
 
 <form on:submit={closeDrawer} class="drawer">

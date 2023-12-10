@@ -2,21 +2,21 @@ import { activeIndex, areaActive, areaProperties, data, map, vizHover } from '$l
 import type { PointLike } from 'maplibre-gl';
 import { get } from 'svelte/store';
 
-const onMouseEnter = () => {
+function onMouseEnter() {
   if (get(areaActive)) {
     const $map = get(map);
     $map.getCanvas().style.cursor = 'pointer';
   }
-};
+}
 
-const onMouseLeave = () => {
+function onMouseLeave() {
   if (get(areaActive)) {
     const $map = get(map);
     $map.getCanvas().style.cursor = 'inherit';
   }
-};
+}
 
-const onClickArea = ({ point }: { point: PointLike }) => {
+function onClickArea({ point }: { point: PointLike }) {
   if (get(areaActive)) {
     const $map = get(map);
     const $data = get(data);
@@ -31,9 +31,9 @@ const onClickArea = ({ point }: { point: PointLike }) => {
       $map.getCanvas().style.cursor = 'inherit';
     }
   }
-};
+}
 
-const onFillHover = ({ point }: { point: PointLike }) => {
+function onFillHover({ point }: { point: PointLike }) {
   const $map = get(map);
   const features = $map.queryRenderedFeatures(point, { layers: ['areas-fill'] });
   if (features.length) {
@@ -44,32 +44,32 @@ const onFillHover = ({ point }: { point: PointLike }) => {
     $map.getCanvas().style.cursor = 'inherit';
     vizHover.set({});
   }
-};
+}
 
-export const removeEvents = () => {
+export function removeEvents() {
   const $map = get(map);
   $map.off('mouseenter', 'areas', onMouseEnter);
   $map.off('mouseleave', 'areas', onMouseLeave);
   $map.off('click', 'areas', onClickArea);
-};
+}
 
-export const addEvents = () => {
+export function addEvents() {
   removeEvents();
   const $map = get(map);
   $map.on('mouseenter', 'areas', onMouseEnter);
   $map.on('mouseleave', 'areas', onMouseLeave);
   $map.on('click', 'areas', onClickArea);
-};
+}
 
-export const addHoverEvents = () => {
+export function addHoverEvents() {
   removeHoverEvents();
   const $map = get(map);
   $map.on('mousemove', 'areas-fill', onFillHover);
   $map.on('mouseleave', 'areas-fill', onFillHover);
-};
+}
 
-export const removeHoverEvents = () => {
+export function removeHoverEvents() {
   const $map = get(map);
   $map.off('mousemove', 'areas-fill', onFillHover);
   $map.off('mouseleave', 'areas-fill', onFillHover);
-};
+}

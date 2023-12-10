@@ -27,4 +27,7 @@ module.exports = {
       },
     },
   ],
+  rules: {
+    'func-style': ['error', 'declaration'],
+  },
 };

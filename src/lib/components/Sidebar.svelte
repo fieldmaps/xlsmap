@@ -13,16 +13,16 @@
   let tab = MANAGE;
   if (!root) onMount(fetchExcel);
 
-  const onManage = () => {
+  function onManage() {
     tab = MANAGE;
     $vizDisplayType = MAP;
     removeDataLayer();
-  };
+  }
 
-  const onVisualize = () => {
+  function onVisualize() {
     tab = VISUALIZE;
     addDataLayer();
-  };
+  }
 </script>
 
 <nav>
