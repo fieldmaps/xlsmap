@@ -2,8 +2,8 @@ import { authorize, readFile, updateFile } from '$lib/utils';
 
 export async function GET({ params, request }) {
   authorize(request.headers, params.slug);
-  const { buffer, headers } = await readFile(`${params.slug}/data.xlsx`);
-  return new Response(buffer, { headers });
+  const stream = await readFile(`${params.slug}/data.xlsx`);
+  return new Response(stream);
 }
 
 export async function PUT({ params, request }) {

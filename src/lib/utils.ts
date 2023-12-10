@@ -2,12 +2,12 @@ import { CONNECT_STR, CONTAINER } from '$env/static/private';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { error } from '@sveltejs/kit';
 
-function base64ToJSON(header) {
+function base64ToJSON(header: string) {
   const decoded = Buffer.from(header, 'base64').toString('ascii');
   return JSON.parse(decoded);
 }
 
-export function authorize(headers, slug) {
+export function authorize(headers: Headers, slug: string) {
   const authorization = headers.get('x-ms-client-principal');
   const userRoles = authorization ? base64ToJSON(authorization).userRoles : [];
   const role = slug.replace('-', '_');
@@ -19,19 +19,25 @@ function getContainerClient() {
   return blobServiceClient.getContainerClient(CONTAINER);
 }
 
-export async function readFile(blobName) {
-  const blobClient = getContainerClient().getBlockBlobClient(blobName);
+// export async function readFile(blobName: string) {
+//   const blobClient = getContainerClient().getBlockBlobClient(blobName);
+//   const buffer = await blobClient.downloadToBuffer();
+//   const { contentType } = await blobClient.getProperties();
+//   const headers = { 'Content-Type': contentType ?? 'application/octet-stream' };
+//   return { buffer, headers };
+// }
+
+export async function readFile(blobName: string) {
   try {
-    const buffer = await blobClient.downloadToBuffer();
-    const { contentType } = await blobClient.getProperties();
-    const headers = { 'Content-Type': contentType ?? 'application/octet-stream' };
-    return { buffer, headers };
+    const blobClient = getContainerClient().getBlockBlobClient(blobName);
+    const blobResponse = await blobClient.download();
+    return blobResponse.readableStreamBody;
   } catch (err) {
     throw error(503, err.toString());
   }
 }
 
-export async function updateFile(blobName, buffer, blobContentType) {
+export async function updateFile(blobName: string, buffer: ArrayBuffer, blobContentType: string) {
   const blobClient = getContainerClient().getBlockBlobClient(blobName);
   await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType } });
 }
