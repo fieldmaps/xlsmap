@@ -6,18 +6,18 @@ const blobServiceClient = CONNECT_STR ? BlobServiceClient.fromConnectionString(C
 const containerClient = CONTAINER ? blobServiceClient?.getContainerClient(CONTAINER) : null;
 
 export async function readFile(blobName: string) {
-  //   if (containerClient) {
-  //     const blobClient = containerClient.getBlockBlobClient(blobName);
-  //     const blobResponse = await blobClient.download();
-  //     return blobResponse.readableStreamBody;
-  //   }
+  if (containerClient) {
+    //     const blobClient = containerClient.getBlockBlobClient(blobName);
+    //     const blobResponse = await blobClient.download();
+    //     return blobResponse.readableStreamBody;
+  }
 }
 
 export async function updateFile(blobName: string, buffer: ArrayBuffer, contentType: string) {
-  //   if (containerClient) {
-  //     const blobClient = containerClient.getBlockBlobClient(blobName);
-  //     await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType: contentType } });
-  //   }
+  if (containerClient) {
+    //     const blobClient = containerClient.getBlockBlobClient(blobName);
+    //     await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType: contentType } });
+  }
 }
 
 function base64ToJSON(header: string) {
