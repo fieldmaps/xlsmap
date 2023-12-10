@@ -3,8 +3,7 @@ import { BlobServiceClient } from '@azure/storage-blob';
 import { error } from '@sveltejs/kit';
 
 function base64ToJSON(header: string) {
-  const encoded = Buffer.from(header, 'base64');
-  const decoded = encoded.toString('ascii');
+  const decoded = Buffer.from(header, 'base64').toString('ascii');
   return JSON.parse(decoded);
 }
 
@@ -28,5 +27,6 @@ export async function readFile(blobName: string) {
 
 export async function updateFile(blobName: string, buffer: ArrayBuffer, contentType: string) {
   const blobClient = getContainerClient().getBlockBlobClient(blobName);
-  await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType: contentType } });
+  const blobHTTPHeaders = { blobContentType: contentType };
+  await blobClient.uploadData(buffer, { blobHTTPHeaders });
 }
