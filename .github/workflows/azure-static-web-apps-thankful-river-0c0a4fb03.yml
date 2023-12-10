@@ -31,6 +31,8 @@ jobs:
           PUBLIC_MAP: ${{ secrets.PUBLIC_MAP }}
           PUBLIC_DATA: ${{ secrets.PUBLIC_DATA }}
           PUBLIC_NAME: ${{ secrets.PUBLIC_NAME }}
+          CONNECT_STR: ${{ secrets.CONNECT_STR }}
+          CONTAINER: ${{ secrets.CONTAINER }}
   close_pull_request_job:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
