@@ -21,8 +21,8 @@ export function authorize(headers: Headers, slug: string) {
 
 export async function readFile(blobName: string) {
   const blobClient = getContainerClient().getBlockBlobClient(blobName);
-  const blobResponse = await blobClient.download();
-  return blobResponse.readableStreamBody;
+  // const blobResponse = await blobClient.download();
+  // return blobResponse.readableStreamBody;
 }
 
 export async function updateFile(blobName: string, buffer: ArrayBuffer, contentType: string) {
