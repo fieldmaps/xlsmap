@@ -2,12 +2,12 @@ import { CONNECT_STR, CONTAINER } from '$env/static/private';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { error } from '@sveltejs/kit';
 
-function base64ToJSON(header: string) {
+function base64ToJSON(header) {
   const decoded = Buffer.from(header, 'base64').toString('ascii');
   return JSON.parse(decoded);
 }
 
-export function authorize(headers: Headers, slug: string) {
+export function authorize(headers, slug) {
   const authorization = headers.get('x-ms-client-principal');
   const userRoles = authorization ? base64ToJSON(authorization).userRoles : [];
   const role = slug.replace('-', '_');
@@ -19,7 +19,7 @@ function getContainerClient() {
   return blobServiceClient.getContainerClient(CONTAINER);
 }
 
-export async function readFile(blobName: string) {
+export async function readFile(blobName) {
   const blobClient = getContainerClient().getBlockBlobClient(blobName);
   try {
     const buffer = await blobClient.downloadToBuffer();
@@ -31,7 +31,7 @@ export async function readFile(blobName: string) {
   }
 }
 
-export async function updateFile(blobName: string, buffer: ArrayBuffer, blobContentType: string) {
+export async function updateFile(blobName, buffer, blobContentType) {
   const blobClient = getContainerClient().getBlockBlobClient(blobName);
   await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType } });
 }
