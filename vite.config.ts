@@ -7,6 +7,10 @@ export default defineConfig({
     include: ['src/**/*.{test,spec}.{js,ts}'],
   },
   build: {
-    minify: 'terser'
-  }
+    minify: 'terser',
+    terserOptions: {
+      keep_fnames: /AbortSignal/,
+      sourceMap: true,
+    },
+  },
 });
