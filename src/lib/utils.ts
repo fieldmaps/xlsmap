@@ -4,7 +4,7 @@ import { error } from '@sveltejs/kit';
 
 function getContainerClient() {
   const blobServiceClient = BlobServiceClient.fromConnectionString(CONNECT_STR);
-  return blobServiceClient?.getContainerClient(CONTAINER);
+  return blobServiceClient.getContainerClient(CONTAINER);
 }
 
 export async function readFile(blobName: string) {
