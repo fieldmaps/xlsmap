@@ -7,11 +7,6 @@ function base64ToJSON(header: string) {
   return JSON.parse(decoded);
 }
 
-function getContainerClient() {
-  const blobServiceClient = BlobServiceClient.fromConnectionString(CONNECT_STR);
-  return blobServiceClient.getContainerClient(CONTAINER);
-}
-
 export function authorize(headers: Headers, slug: string) {
   const authorization = headers.get('x-ms-client-principal');
   const userRoles = authorization ? base64ToJSON(authorization).userRoles : [];
@@ -19,14 +14,18 @@ export function authorize(headers: Headers, slug: string) {
   if (!userRoles.includes(role)) throw error(401, 'Not authorized to access this resource');
 }
 
+function getContainerClient() {
+  const blobServiceClient = BlobServiceClient.fromConnectionString(CONNECT_STR);
+  return blobServiceClient.getContainerClient(CONTAINER);
+}
+
 export async function readFile(blobName: string) {
   const blobClient = getContainerClient().getBlockBlobClient(blobName);
-  // const blobResponse = await blobClient.download();
+  const blobResponse = await blobClient.download();
   // return blobResponse.readableStreamBody;
 }
 
-export async function updateFile(blobName: string, buffer: ArrayBuffer, contentType: string) {
+export async function updateFile(blobName: string, buffer: ArrayBuffer, blobContentType: string) {
   const blobClient = getContainerClient().getBlockBlobClient(blobName);
-  const blobHTTPHeaders = { blobContentType: contentType };
-  await blobClient.uploadData(buffer, { blobHTTPHeaders });
+  await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType } });
 }
