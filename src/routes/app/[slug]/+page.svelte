@@ -5,7 +5,7 @@
 </script>
 
 <svelte:head>
-  <link rel="manifest" href="/{$page.params.slug}/" />
+  <link rel="manifest" href="/data/{$page.params.slug}/manifest.json" />
 </svelte:head>
 
 <main>
