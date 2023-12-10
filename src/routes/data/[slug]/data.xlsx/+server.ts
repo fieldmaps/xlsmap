@@ -1,4 +1,4 @@
-import { authorize, readFile, updateFile } from '../utils.js';
+import { authorize, readFile, updateFile } from '$lib/utils';
 
 export async function GET({ params, request }) {
   authorize(request.headers, params.slug);
