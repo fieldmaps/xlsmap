@@ -1,6 +1,6 @@
 // import { CONNECT_STR, CONTAINER } from '$env/static/private';
 // import { BlobServiceClient } from '@azure/storage-blob';
-// import { error } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
 // const blobServiceClient = CONNECT_STR ? BlobServiceClient.fromConnectionString(CONNECT_STR) : null;
 // const containerClient = CONTAINER ? blobServiceClient?.getContainerClient(CONTAINER) : null;
@@ -20,9 +20,15 @@ export async function updateFile(blobName: string, buffer: ArrayBuffer, contentT
   //   }
 }
 
+function base64ToJSON(header: string) {
+  const encoded = Buffer.from(header, 'base64');
+  const decoded = encoded.toString('ascii');
+  return JSON.parse(decoded);
+}
+
 export function authorize(headers: Headers, slug: string) {
   const authorization = headers.get('authorization');
-  const userRoles = authorization ? JSON.parse(atob(authorization.split(' ')[1])).userRoles : [];
-  // const role = slug.replace('-', '_');
-  // if (!userRoles.includes(role)) throw error(401, 'Not authorized to access this resource');
+  const userRoles = authorization ? base64ToJSON(authorization.split(' ')[1]).userRoles : [];
+  const role = slug.replace('-', '_');
+  if (!userRoles.includes(role)) throw error(401, 'Not authorized to access this resource');
 }
