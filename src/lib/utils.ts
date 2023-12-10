@@ -2,22 +2,20 @@ import { CONNECT_STR, CONTAINER } from '$env/static/private';
 import { BlobServiceClient } from '@azure/storage-blob';
 import { error } from '@sveltejs/kit';
 
-const blobServiceClient = CONNECT_STR ? BlobServiceClient.fromConnectionString(CONNECT_STR) : null;
-const containerClient = CONTAINER ? blobServiceClient?.getContainerClient(CONTAINER) : null;
+function getContainerClient() {
+  const blobServiceClient = BlobServiceClient.fromConnectionString(CONNECT_STR);
+  return blobServiceClient?.getContainerClient(CONTAINER);
+}
 
 export async function readFile(blobName: string) {
-  if (containerClient) {
-    //     const blobClient = containerClient.getBlockBlobClient(blobName);
-    //     const blobResponse = await blobClient.download();
-    //     return blobResponse.readableStreamBody;
-  }
+  const blobClient = getContainerClient().getBlockBlobClient(blobName);
+  const blobResponse = await blobClient.download();
+  return blobResponse.readableStreamBody;
 }
 
 export async function updateFile(blobName: string, buffer: ArrayBuffer, contentType: string) {
-  if (containerClient) {
-    //     const blobClient = containerClient.getBlockBlobClient(blobName);
-    //     await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType: contentType } });
-  }
+  const blobClient = getContainerClient().getBlockBlobClient(blobName);
+  await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType: contentType } });
 }
 
 function base64ToJSON(header: string) {
