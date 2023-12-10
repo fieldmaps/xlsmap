@@ -28,7 +28,7 @@ function base64ToJSON(header: string) {
 
 export function authorize(headers: Headers, slug: string) {
   const authorization = headers.get('authorization');
-  // const userRoles = authorization ? base64ToJSON(authorization.split(' ')[1]).userRoles : [];
+  const userRoles = authorization ? base64ToJSON(authorization.split(' ')[1]).userRoles : [];
   // const role = slug.replace('-', '_');
   // if (!userRoles.includes(role)) throw error(401, 'Not authorized to access this resource');
 }
