@@ -30,8 +30,8 @@ function getContainerClient() {
 export async function readFile(blobName: string) {
   try {
     const blobClient = getContainerClient().getBlockBlobClient(blobName);
-    const blobResponse = await blobClient.getProperties();
-    return blobResponse.contentType
+    const blobResponse = await blobClient.download();
+    return blobResponse.readableStreamBody;
   } catch (err) {
     throw error(503, err.toString());
   }
