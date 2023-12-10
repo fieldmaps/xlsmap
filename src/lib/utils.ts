@@ -27,7 +27,7 @@ export async function readFile(blobName: string) {
     const headers = { 'Content-Type': contentType ?? 'application/octet-stream' };
     return { buffer, headers };
   } catch (err) {
-    throw error(500, err);
+    throw error(503, err);
   }
 }
 
