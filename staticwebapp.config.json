@@ -20,6 +20,9 @@
       "redirect": "/.auth/logout"
     }
   ],
+  "navigationFallback": {
+    "rewrite": "/api/__render"
+  },
   "responseOverrides": {
     "401": {
       "redirect": "/.auth/login/aad?post_login_redirect_uri=.referrer",
