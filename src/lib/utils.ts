@@ -10,9 +10,11 @@ function base64ToJSON(header: string) {
 
 export function authorize(headers: Headers, slug: string) {
   const authorization = headers.get('x-ms-client-principal');
-  const userRoles = authorization ? base64ToJSON(authorization).userRoles : [];
-  const role = slug.replace('-', '_');
-  if (!userRoles.includes(role)) throw error(401, 'Not authorized to access this resource');
+  if (authorization) {
+    const userRoles = base64ToJSON(authorization).userRoles;
+    const role = slug.replace('-', '_');
+    if (!userRoles.includes(role)) throw error(401, 'Not authorized to access this resource');
+  }
 }
 
 export async function readFile(blobName: string) {
