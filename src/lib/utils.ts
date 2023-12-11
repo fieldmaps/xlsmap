@@ -21,6 +21,7 @@ export async function readFile(blobName: string) {
 }
 
 export async function updateFile(blobName: string, body: Blob) {
-  const options: RequestInit = { method: 'PUT', body };
+  const headers = { 'x-ms-blob-type': 'BlockBlob' };
+  const options: RequestInit = { method: 'PUT', body, headers };
   await fetch(`${AZURE_URL}/${blobName}?${SAS_TOKEN}`, options);
 }
