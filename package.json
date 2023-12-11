@@ -24,7 +24,7 @@
     "@azure/static-web-apps-cli": "^1.1.6",
     "@playwright/test": "^1.40.1",
     "@sveltejs/adapter-auto": "^2.1.1",
-    "@sveltejs/kit": "^1.27.7",
+    "@sveltejs/kit": "^1.28.0",
     "@types/d3-array": "^3.2.1",
     "@types/d3-format": "^3.0.4",
     "@types/merge-images": "^1.2.4",

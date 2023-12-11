@@ -1,6 +1,7 @@
-import { CONNECT_STR, CONTAINER } from '$env/static/private';
-import { BlobServiceClient } from '@azure/storage-blob';
+import { SAS_URL } from '$env/static/private';
 import { error } from '@sveltejs/kit';
+
+const [AZURE_URL, SAS_TOKEN] = SAS_URL.split('?');
 
 function base64ToJSON(header: string) {
   const decoded = Buffer.from(header, 'base64').toString('ascii');
@@ -14,24 +15,9 @@ export function authorize(headers: Headers, slug: string) {
   if (!userRoles.includes(role)) throw error(401, 'Not authorized to access this resource');
 }
 
-function getContainerClient() {
-  const blobServiceClient = BlobServiceClient.fromConnectionString(CONNECT_STR);
-  return blobServiceClient.getContainerClient(CONTAINER);
-}
-
 export async function readFile(blobName: string) {
-  try {
-    const controller = new AbortController();
-    const abortSignal = controller.signal;
-    const blobClient = getContainerClient().getBlockBlobClient(blobName);
-    const blobResponse = await blobClient.download(undefined, undefined, { abortSignal });
-    return blobResponse.readableStreamBody;
-  } catch (err) {
-    throw error(503, err.toString());
-  }
+  const res = await fetch(`${AZURE_URL}/${blobName}?${SAS_TOKEN}`);
+  return await res.blob();
 }
 
-export async function updateFile(blobName: string, buffer: ArrayBuffer, blobContentType: string) {
-  const blobClient = getContainerClient().getBlockBlobClient(blobName);
-  await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType } });
-}
+export async function updateFile(blobName: string, buffer: ArrayBuffer, blobContentType: string) {}
