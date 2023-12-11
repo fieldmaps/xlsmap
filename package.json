@@ -7,7 +7,7 @@
     "node": ">=18"
   },
   "scripts": {
-    "start": "npm run build && swa start",
+    "start": "AZURE_SWA=YES npm run build && swa start",
     "dev": "vite dev",
     "dev:host": "vite dev --host",
     "build": "vite build",

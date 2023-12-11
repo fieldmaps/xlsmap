@@ -8,7 +8,8 @@ export async function GET({ params, request }) {
 
 export async function PUT({ params, request }) {
   authorize(request.headers, params.slug);
-  const body = await request.blob();
+  const formData = await request.formData();
+  const body = formData.get('file') as Blob;
   const today = new Date().toISOString().split('T')[0];
   await updateFile(`${params.slug}/data.xlsx`, body);
   await updateFile(`${params.slug}/data/data_${today}.xlsx`, body);
