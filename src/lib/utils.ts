@@ -10,11 +10,9 @@ function base64ToJSON(header: string) {
 
 export function authorize(headers: Headers, slug: string) {
   const authorization = headers.get('x-ms-client-principal');
-  if (authorization) {
-    const userRoles = base64ToJSON(authorization).userRoles;
-    const role = slug.replace('-', '_');
-    if (!userRoles.includes(role)) throw error(401, 'Not authorized to access this resource');
-  }
+  const userRoles = authorization ? base64ToJSON(authorization).userRoles : [];
+  const role = slug.replace('-', '_');
+  if (!userRoles.includes(role)) throw error(401, 'Not authorized to access this resource');
 }
 
 export async function readFile(blobName: string) {
@@ -23,7 +21,6 @@ export async function readFile(blobName: string) {
 }
 
 export async function updateFile(blobName: string, body: Blob) {
-  const headers = { 'x-ms-blob-type': 'BlockBlob' };
-  const options: RequestInit = { method: 'PUT', body, headers };
+  const options: RequestInit = { method: 'PUT', body };
   await fetch(`${AZURE_URL}/${blobName}?${SAS_TOKEN}`, options);
 }

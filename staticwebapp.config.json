@@ -4,6 +4,11 @@
   },
   "routes": [
     {
+      "route": "*",
+      "methods": ["POST", "PUT", "DELETE"],
+      "rewrite": "/api/__render"
+    },
+    {
       "route": "/app/*",
       "allowedRoles": ["authenticated"]
     },
@@ -18,11 +23,6 @@
     {
       "route": "/logout",
       "redirect": "/.auth/logout"
-    },
-    {
-      "route": "*",
-      "methods": ["POST", "PUT", "DELETE"],
-      "rewrite": "/api/__render"
     }
   ],
   "navigationFallback": {
