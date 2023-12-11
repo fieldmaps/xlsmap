@@ -19,18 +19,12 @@ function getContainerClient() {
   return blobServiceClient.getContainerClient(CONTAINER);
 }
 
-// export async function readFile(blobName: string) {
-//   const blobClient = getContainerClient().getBlockBlobClient(blobName);
-//   const buffer = await blobClient.downloadToBuffer();
-//   const { contentType } = await blobClient.getProperties();
-//   const headers = { 'Content-Type': contentType ?? 'application/octet-stream' };
-//   return { buffer, headers };
-// }
-
 export async function readFile(blobName: string) {
   try {
-    const blobClient = getContainerClient().getBlobClient(blobName);
-    const blobResponse = await blobClient.download();
+    const controller = new AbortController();
+    const abortSignal = controller.signal;
+    const blobClient = getContainerClient().getBlockBlobClient(blobName);
+    const blobResponse = await blobClient.download(undefined, undefined, { abortSignal });
     return blobResponse.readableStreamBody;
   } catch (err) {
     throw error(503, err.toString());
