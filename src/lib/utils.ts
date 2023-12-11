@@ -1,4 +1,5 @@
 import { SAS_URL } from '$env/static/private';
+import { ContainerClient } from '@azure/storage-blob';
 import { error } from '@sveltejs/kit';
 
 const [AZURE_URL, SAS_TOKEN] = SAS_URL.split('?');
@@ -21,7 +22,8 @@ export async function readFile(blobName: string) {
 }
 
 export async function updateFile(blobName: string, body: Blob) {
-  const headers = { 'x-ms-blob-type': 'BlockBlob' };
-  const options: RequestInit = { method: 'PUT', body, headers };
-  await fetch(`${AZURE_URL}/${blobName}?${SAS_TOKEN}`, options);
+  const blobContentType = body.type;
+  const buffer = await body.arrayBuffer();
+  const blobClient = new ContainerClient(SAS_URL).getBlockBlobClient(blobName);
+  await blobClient.uploadData(buffer, { blobHTTPHeaders: { blobContentType } });
 }
