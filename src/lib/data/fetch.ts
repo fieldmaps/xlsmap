@@ -41,10 +41,8 @@ export async function putData() {
   const { slug } = $page.params;
   const mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
   const $data = get(data);
-  const file = new Blob([await jsonToExcel($data)], { type: mimeType });
-  const formData = new FormData();
-  formData.append('file', file);
-  const options = { method: 'PUT', body: formData };
+  const body = new Blob([await jsonToExcel($data)], { type: mimeType });
+  const options = { method: 'PUT', body };
   await fetch(`${PUBLIC_DATA}/${slug}/data.xlsx`, options);
 }
 
