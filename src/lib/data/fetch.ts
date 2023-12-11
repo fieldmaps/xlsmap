@@ -26,13 +26,16 @@ async function fetchForm() {
 
 export async function fetchData() {
   const $page = get(page);
+  const $dataOnCloud = get(dataOnCloud);
   const { slug } = $page.params;
   const res = await fetch(`${PUBLIC_DATA}/${slug}/data.xlsx`);
   if (res.ok) {
     const file = await res.arrayBuffer();
     await loadData(file);
-    const cloudOnly = await fetch(PUBLIC_DATA);
-    if (cloudOnly.ok) dataOnCloud.set(true);
+    if (!$dataOnCloud) {
+      const cloudOnlyRoute = await fetch(PUBLIC_DATA);
+      if (cloudOnlyRoute.ok) dataOnCloud.set(true);
+    }
   }
 }
 
