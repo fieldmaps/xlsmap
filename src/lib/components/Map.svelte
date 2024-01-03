@@ -16,10 +16,13 @@
     vizVisable,
   } from '$lib/stores';
   import { format } from 'd3-format';
-  import { Map, NavigationControl, ScaleControl, type LngLatBoundsLike } from 'maplibre-gl';
+  import type { LngLatBoundsLike } from 'maplibre-gl';
+  import MapLibreGL from 'maplibre-gl';
   import 'maplibre-gl/dist/maplibre-gl.css';
   import { isMapboxURL, transformMapboxUrl } from 'maplibregl-mapbox-request-transformer';
   import { onMount } from 'svelte';
+
+  const { Map, NavigationControl, ScaleControl } = MapLibreGL;
 
   export let root: boolean;
   let container: HTMLDivElement;
